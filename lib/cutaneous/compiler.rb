@@ -79,7 +79,7 @@ module Cutaneous
       end
     end
 
-    # Represents the block structure of a sub-template that inherits its
+    # Represents the structure of a sub-template that inherits its
     # block structure from some parent template defined by an `extends`
     # tag.
     class ExtendedBlockSet < BlockSet
@@ -143,15 +143,11 @@ module Cutaneous
       end
 
       def block_super
-        push(super_block)
+        push(@block_set.super_block)
       end
 
       def push(tag)
         @block_set.push(tag)
-      end
-
-      def super_block
-        @block_set.super_block
       end
     end
 
