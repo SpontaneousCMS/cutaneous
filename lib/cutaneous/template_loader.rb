@@ -7,20 +7,30 @@ module Cutaneous
       @roots, @format, @extension = template_roots, format, extension
     end
 
-    def template(template)
-      Template.new(lexer(template)).tap do |template|
-        template.path   = path(template)
+    def template_file(template)
+      template_path = path(template)
+      raise UnknownTemplateError.new(@roots, template) if template_path.nil?
+
+      Template.new(file_lexer(template_path)).tap do |template|
+        template.path   = template_path
         template.loader = self
       end
     end
 
-    def lexer(template)
-      lexer_class.new(read(template))
+    alias_method :template, :template_file
+
+    def template_string(template_string)
+      Template.new(lexer(template_string)).tap do |template|
+        template.loader = self
+      end
     end
 
+    def file_lexer(template_path)
+      lexer(::File.read(template_path))
+    end
 
-    def read(template_name)
-      ::File.read(path(template_name))
+    def lexer(template_string)
+      lexer_class.new(template_string)
     end
 
     def path(template_name)

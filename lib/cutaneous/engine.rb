@@ -11,13 +11,24 @@ module Cutaneous
       end
     end
 
-    def render(path, format = "html", context)
-      template(path, format).render(context)
+    def render_file(path, format, context)
+      template_file(path, format).render(context)
     end
 
-    def template(path, format = "html")
+    alias_method :render, :render_file
+
+    def render_string(template_string, format, context)
+      template_string(template_string, format).render(context)
+    end
+
+    def template_file(path, format = "html")
       loader = loader(format)
-      loader.template(path)
+      loader.template_file(path)
+    end
+
+    def template_string(template_string, format = "html")
+      loader = loader(format)
+      loader.template_string(template_string)
     end
   end
 end

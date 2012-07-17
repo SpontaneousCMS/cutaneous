@@ -46,4 +46,38 @@ describe Cutaneous do
     result = engine.render("instance", "html", context)
     result.must_equal "left = wrong\n"
   end
+
+  it "Allows you to render a template string" do
+    context = ContextHash(right: "left")
+    result = engine.render_string("${ right }", "html", context)
+    result.must_equal "left"
+  end
+
+  it "Lets you mix template tags" do
+    context = ContextHash(right: "left")
+    result = engine.render_string("${ right } = {{ result }}", "html", context)
+    result.must_equal "left = {{ result }}"
+  end
+
+  it "Has a configurable lexer class" do
+    engine = Cutaneous::Engine.new(template_root, Cutaneous::RequestLexer)
+    context = ContextHash(right: "wrong")
+    result = engine.render_string("${ left } = {{ right }}", "html", context)
+    result.must_equal "${ left } = wrong"
+  end
+
+  it "Allows for multiple template roots" do
+    roots = Array(template_root)
+    roots.push File.join(template_root, "other")
+    engine = Cutaneous::Engine.new(roots, Cutaneous::PublishLexer)
+    context = ContextHash(right: "wrong")
+    result = engine.render_string('%{ include "different" }', "html", context)
+    result.must_equal "wrong\n"
+  end
+
+  it "Throws a resonable error if asked to include a non-existant file" do
+    context = ContextHash(right: "wrong")
+    test = proc { engine.render_string('%{ include "different" }', "html", context) }
+    test.must_raise Cutaneous::UnknownTemplateError
+  end
 end
