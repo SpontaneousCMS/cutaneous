@@ -21,14 +21,26 @@ module Cutaneous
       template_string(template_string, format).render(context)
     end
 
+    def file_loader(format)
+      @loaders[format.to_s] ||= loader_class.new(@roots, format).tap do |loader|
+        loader.lexer_class = @lexer_class
+      end
+    end
+
+    def string_loader(format)
+      StringLoader.new(file_loader(format)).tap do |loader|
+        loader.lexer_class = @lexer_class
+      end
+    end
+
     def template_file(path, format = "html")
-      loader = loader(format)
-      loader.template_file(path)
+      loader = file_loader(format)
+      loader.template(path)
     end
 
     def template_string(template_string, format = "html")
-      loader = loader(format)
-      loader.template_string(template_string)
+      loader = string_loader(format)
+      loader.template(template_string)
     end
   end
 end
