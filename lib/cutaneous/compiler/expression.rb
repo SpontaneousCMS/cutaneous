@@ -27,8 +27,19 @@ module Cutaneous
     end
 
     class Text < Expression
+      BEGINNING_WHITESPACE ||= /\A(\s*?[\r\n]+)/
+
+      def initialize(expression, strip_whitespace = false)
+        @whitespace = ""
+        if strip_whitespace && expression =~ BEGINNING_WHITESPACE
+          @whitespace = $1
+          expression.slice!(0, @whitespace.length)
+        end
+        super(expression)
+      end
+
       def to_script
-        %(__buf << %Q`) << @expression << %(` ; )
+        %(__buf << %Q`) << @expression << %(` ; ) << @whitespace << ";"
       end
     end
 

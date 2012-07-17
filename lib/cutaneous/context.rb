@@ -17,7 +17,9 @@ module Cutaneous
       @__target
     end
 
-    def _decode_params(params); params; end
+    def _decode_params(params)
+      params.to_s
+    end
 
     def escape(value)
       value

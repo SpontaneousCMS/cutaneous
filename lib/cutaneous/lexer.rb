@@ -61,6 +61,7 @@ module Cutaneous
     protected
 
     BRACES ||= /\{|\}/
+    STRIP_WS = "-"
 
     def parse
       tokens    = []
@@ -75,26 +76,33 @@ module Cutaneous
         type, brace_count, endtag_length = token_map[tag]
         text.slice!(text.length - tag.length, text.length)
         expression = ""
+        strip_whitespace = false
 
         begin
           expression << scanner.scan_until(BRACES)
           brace = scanner.matched
-          brace_count += ((123 - brace.ord)+1)
+          brace_count += ((123 - brace.ord)+1) # '{' = 1,  '}' = -1
         end while (brace_count > 0)
 
-        expression.slice!(expression.length - endtag_length, expression.length)
+        length = expression.length
+        expression.slice!(length - endtag_length, length)
+
+        if expression.end_with?(STRIP_WS)
+          strip_whitespace = true
+          length = expression.length
+          expression.slice!(length - 1, length)
+        end
 
         tokens << place_text_token(text) if text.length > 0
-        tokens << create_token(type, expression)
+        tokens << create_token(type, expression, strip_whitespace)
         previous = type
       end
       tokens << place_text_token(scanner.rest) unless scanner.eos?
       tokens
     end
 
-    def create_token(type, expression)
-      # expression.strip! if type == :expression || type == :escaped_expression || type == :statement
-      [type, expression]
+    def create_token(type, expression, strip_whitespace)
+      [type, expression, strip_whitespace]
     end
 
     #BEGINNING_WHITESPACE ||= /\A\s*?[\r\n]+/
@@ -102,12 +110,6 @@ module Cutaneous
     ESCAPE_STRING        ||= /[`\\]/
 
     def place_text_token(expression)
-      # if preceeding_type == :statement || preceeding_type == :comment
-      #   expression.gsub!(BEGINNING_WHITESPACE, '')
-      # end
-      # if following_type == :statement || following_type == :comment
-      #   expression.gsub!(ENDING_WHITESPACE, '\\1')
-      # end
       expression.gsub!(self.class.escaped_tag_pattern, '\1')
       expression.gsub!(ESCAPE_STRING, '\\\\\&')
       [:text, expression]

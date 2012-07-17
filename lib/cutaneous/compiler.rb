@@ -171,10 +171,11 @@ module Cutaneous
 
     def expressions
       expressions = []
-      @lexer.tokens.each do |type, expression|
+      strip       = nil
+      @lexer.tokens.each do |type, expression, strip_whitespace|
         case type
         when :text
-          expressions << Text.new(expression)
+          expressions << Text.new(expression, strip)
         when :expression
           expressions << Expression.new(expression)
         when :escaped_expression
@@ -184,6 +185,7 @@ module Cutaneous
         when :comment
           expressions << Comment.new(expression)
         end
+        strip = strip_whitespace
       end
       # We don't need this any more so release it
       @lexer = nil

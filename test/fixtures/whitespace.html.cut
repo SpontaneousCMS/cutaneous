@@ -1,0 +1,6 @@
+%{ extends "a" -}
+%{ block :b -}
+%{ 3.times do |n| -}
+here ${ n }
+%{ end -}
+%{ endblock :b -}

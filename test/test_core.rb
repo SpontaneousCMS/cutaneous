@@ -13,13 +13,20 @@ describe Cutaneous do
   it "Will parse & execute a simple template with statements" do
     context = ContextHash(right: "right")
     result = engine.render("statements", "html", context)
-    result.must_equal "\nThis is right\n\nThis is right\n\nThis is right\n\n"
+    result.must_equal "\nThis is right 0\n\nThis is right 1\n\nThis is right 2\n\n"
   end
 
   it "Will parse & execute a simple template with comments" do
     context = ContextHash(right: "right")
     result = engine.render("comments", "html", context)
     result.must_equal "\n"
+  end
+
+  it "Will remove whitespace after tags with a closing '-'" do
+    context = ContextHash(right: "right")
+    result = engine.render("whitespace", "html", context)
+    expected = ["aa", "here 0", "here 1", "here 2\n", "ac\n", "ad\n", "ae\n", "af\n", "ag\n"].join("\n")
+    result.must_equal expected
   end
 
   it "Allows you to include other templates"
