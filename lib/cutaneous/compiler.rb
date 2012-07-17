@@ -1,140 +1,51 @@
+require 'cutaneous/compiler/expression'
+
 module Cutaneous
   class Compiler
-    def initialize(lexer, loader)
-      @lexer, @loader = lexer, loader
-    end
-
-    class Expression
-      def initialize(expression)
-        @expression = expression
-      end
-
-      def to_script
-        %{__buf << _decode_params((} << @expression << %{)) ; }
-      end
-
-      def visit(compiler)
-        compiler.push(self)
-      end
-    end
-
-    class EscapedExpression < Expression
-      def to_script
-        %{__buf << escape(_decode_params((} << @expression << %{))) ; }
-      end
-    end
-
-    class Statement < Expression
-      def to_script
-        "" << @expression << " ; "
-      end
-    end
-
-    class Text < Expression
-      def to_script
-        %(__buf << %Q`) << @expression << %(` ; )
-      end
-    end
-
-    class Comment < Expression
-      # Need to make sure that the line positions are the same
-      def to_script
-        @expression.lines.to_a[0..-2].map { |line| "\n" }.join
-      end
-    end
-
-    # class BlockTree
-    #   include Enumerable
-
-    #   def initialize
-    #     @statements = []
-    #   end
-
-    #   def push(statement)
-    #     @statements << statement
-    #   end
-
-    #   alias_method :<<, :push
-
-    #   def each(&block)
-    #     @statements.each(&block)
-    #   end
-    # end
-    class Extends
-      def initialize(template)
-        @template = template
-      end
-
-      def visit(compiler)
-        compiler.make_child(@template)
-      end
-    end
-
-    class BlockStart
-      def initialize(name)
-        @name = name.to_sym
-      end
-      def visit(compiler)
-        compiler.template.start_block(@name)
-      end
-    end
-
-    class BlockEnd
-      def visit(compiler)
-        compiler.template.end_block
-      end
-    end
-
-    class BlockSuper
-      def visit(compiler)
-        @block = compiler.template.current_block
-        @template = compiler.template
-        compiler.push(self)
-      end
-
-      def to_script
-        superblock = @template.block_super(@block.name)
-        return "" if superblock.nil?
-        superblock.to_script
-      end
-    end
-
+    # A single named block of template expressions
     class Block
       attr_reader :name
+
       def initialize(name)
-        @name = name
-        @tree = []
+        @name        = name
+        @expressions = []
       end
 
-      def push(tag)
-        @tree << tag
+      def push(expression)
+        @expressions << expression
       end
 
       alias_method :<<, :push
 
       def to_script
-        @tree.map { |tag| tag.to_script }.join
+        script = ""
+        @expressions.each do |expression|
+          script << expression.to_script
+        end
+        script
       end
     end
 
-    class MasterTemplate
+    # Represents the block structure of a top-level master template,
+    # i.e. one with no `extends` call.
+    class BlockSet
       attr_reader   :current_block
       attr_accessor :loader
 
       def initialize
         @block_order = []
         @block_store = {}
-        start_block
+        block_start
       end
 
-      def start_block(name = Object.new)
+      def block_start(name = Object.new)
         @current_block = Block.new(name)
         @block_order << name
         @block_store[name] = @current_block
       end
 
-      def end_block
-        start_block
+      def block_end
+        block_start
       end
 
       def push(tag)
@@ -145,23 +56,33 @@ module Cutaneous
         @block_order
       end
 
-      def block_super(block_name)
-        ""
+      def super_block
+        raise CompilationError.new("Invalid 'blocksuper' call from top-level template")
       end
 
       def block(name)
         @block_store[name]
       end
 
+      def each_block
+        block_order.each do |block_name|
+          yield block(block_name)
+        end
+      end
+
       def to_script
-        block_order.map { |block_name|
-          block = self.block(block_name)
-          block.to_script
-        }.join
+        script = ""
+        each_block do |block|
+          script << block.to_script
+        end
+        script
       end
     end
 
-    class ChildTemplate < MasterTemplate
+    # Represents the block structure of a sub-template that inherits its
+    # block structure from some parent template defined by an `extends`
+    # tag.
+    class ExtendedBlockSet < BlockSet
       def initialize(template_name)
         @super_template_name = template_name
         super()
@@ -171,8 +92,8 @@ module Cutaneous
         @super_template ||= @loader.template(@super_template_name)
       end
 
-      def block_super(block_name)
-        super_template.block(block_name)
+      def super_block
+        super_template.block(current_block.name)
       end
 
       def block(name)
@@ -185,69 +106,88 @@ module Cutaneous
       end
     end
 
-    class CompiledTemplate
-      attr_accessor :template
-
+    # Converts a list of expressions into either a master or child block
+    # set.
+    class BlockBuilder
       def initialize(loader)
-        @loader, @template = loader, MasterTemplate.new
-        @template.loader = @loader
+        @loader = loader
+        assign_block_set(BlockSet.new)
       end
 
-      def make_child(parent)
-        @template = ChildTemplate.new(parent)
-        @template.loader = @loader
+      def build(expressions)
+        expressions.each do |expression|
+          expression.affect(self)
+        end
+        @block_set
       end
 
-      def add(tag)
-        tag.visit(self)
+      def extends(parent)
+        assign_block_set(ExtendedBlockSet.new(parent))
+      end
+
+      def assign_block_set(block_set)
+        @block_set = block_set
+        @block_set.loader = @loader
+      end
+
+      def current_block
+        @block_set.current_block
+      end
+
+      def block_start(block_name)
+        @block_set.block_start(block_name)
+      end
+
+      def block_end
+        @block_set.block_end
+      end
+
+      def block_super
+        push(super_block)
       end
 
       def push(tag)
-        @template.push(tag)
+        @block_set.push(tag)
       end
 
-      def to_script
-        @template.to_script
-      end
-
-      def block_order
-        @template.block_order
-      end
-      def block(name)
-        @template.block(name)
+      def super_block
+        @block_set.super_block
       end
     end
 
-    def compiled
-      @compiled ||= build_block_tree
+    def initialize(lexer, loader)
+      @lexer, @loader = lexer, loader
     end
 
 
-    def build_block_tree
-      tree = []
+    def blocks
+      @blocks ||= build_hierarchy
+    end
+
+    def build_hierarchy
+      builder = BlockBuilder.new(@loader)
+      builder.build(expressions)
+    end
+
+    def expressions
+      expressions = []
       @lexer.tokens.each do |type, expression|
         case type
         when :text
-          tree << Text.new(expression)
+          expressions << Text.new(expression)
         when :expression
-          tree << Expression.new(expression)
+          expressions << Expression.new(expression)
         when :escaped_expression
-          tree << EscapedExpression.new(expression)
+          expressions << EscapedExpression.new(expression)
         when :statement
-          tree << statement(expression)
+          expressions << parse_statement(expression)
         when :comment
-          tree << Comment.new(expression)
+          expressions << Comment.new(expression)
         end
       end
-      compiled = CompiledTemplate.new(@loader)
-      tree.each do |tag|
-        compiled.add(tag)
-      end
-      compiled
-    end
-
-    def compile
-      compiled.to_script
+      # We don't need this any more so release it
+      @lexer = nil
+      expressions
     end
 
     EXTENDS     = /\A\s*extends\s+["']([^"']+)["']\s*\z/o
@@ -255,7 +195,7 @@ module Cutaneous
     BLOCK_END   = /\A\s*endblock(?:\s+:?[a-zA-Z_][a-zA-Z0-9_]*)?\s*\z/o
     BLOCK_SUPER = /\A\s*block_?super\s*\z/o
 
-    def statement(statement)
+    def parse_statement(statement)
       case statement
       when EXTENDS
         Extends.new($1)
@@ -271,15 +211,15 @@ module Cutaneous
     end
 
     def script
-      compile
+      blocks.to_script
     end
 
     def block_order
-      compiled.block_order
+      blocks.block_order
     end
 
     def block(name)
-      compiled.block(name)
+      blocks.block(name)
     end
   end
 end

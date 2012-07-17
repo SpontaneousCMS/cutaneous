@@ -7,4 +7,6 @@ require 'cutaneous/compiler'
 
 module Cutaneous
   VERSION = "0.0.1-alpha"
+
+  class CompilationError < Exception; end
 end
