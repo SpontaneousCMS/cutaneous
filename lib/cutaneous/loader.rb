@@ -46,4 +46,15 @@ module Cutaneous
       end
     end
   end
+
+  class CachedFileLoader < FileLoader
+    def template_cache
+      @template_cache ||= {}
+    end
+
+    def template(template)
+      return template_cache[template] if template_cache.key?(template)
+      template_cache[template] = super
+    end
+  end
 end

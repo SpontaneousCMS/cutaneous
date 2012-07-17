@@ -16,11 +16,17 @@ module Cutaneous
     end
 
     def template_proc
-      @template_proc ||= eval(template_proc_src, nil, path || "(cutaneous)")
+      @template_proc ||= eval(template_proc_src, nil, path || "(cutaneous)").tap do |proc|
+        @lexer = nil
+      end
     end
 
     def template_proc_src
-      "lambda { |context| self.__buf = __buf = ''; #{compiler.script}; __buf.to_s }"
+      "lambda { |context| self.__buf = __buf = ''; #{script}; __buf.to_s }"
+    end
+
+    def script
+      compiler.script
     end
 
     def block_order
