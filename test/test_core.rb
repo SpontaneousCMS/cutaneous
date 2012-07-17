@@ -80,4 +80,36 @@ describe Cutaneous do
     test = proc { engine.render_string('%{ include "different" }', "html", context) }
     test.must_raise Cutaneous::UnknownTemplateError
   end
+
+  it "Maintains source line numbers for exceptions" do
+    context = ContextHash(right: "wrong")
+    test = proc { engine.render("error", "html", context) }
+    test.must_raise RuntimeError
+    backtrace = message = nil
+    begin
+      test.call
+    rescue RuntimeError => e
+      message   = e.message
+      backtrace = e.backtrace
+    end
+    filename, line = backtrace.first.split(":")
+    filename.must_equal File.join(template_root, "error.html.cut")
+    line.must_equal message
+  end
+
+  it "Maintains source line numbers for exceptions raised by includes" do
+    context = ContextHash(right: "wrong")
+    test = proc { engine.render("included_error", "html", context) }
+    test.must_raise RuntimeError
+    backtrace = message = nil
+    begin
+      test.call
+    rescue RuntimeError => e
+      message   = e.message
+      backtrace = e.backtrace
+    end
+    filename, line = backtrace.first.split(":")
+    filename.must_equal File.join(template_root, "other/error.html.cut")
+    line.must_equal message
+  end
 end

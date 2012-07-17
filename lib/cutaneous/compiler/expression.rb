@@ -46,7 +46,7 @@ module Cutaneous
     class Comment < Expression
       # Need to make sure that the line positions are the same
       def to_script
-        @expression.lines.to_a[0..-2].map { |line| "\n" }.join
+        $/ * (@expression.count($/))
       end
     end
 

@@ -1,0 +1,30 @@
+
+
+%{
+	3.times do |n|
+}
+
+!{
+
+	comment
+
+	}
+${ n -}
+%{
+	end }
+%{ include "partial" -}
+%{ test = "here"
+
+-}
+
+
+
+
+here ${ test }
+
+!{
+	the error message should be the same as the line number of the expression
+	}
+%{
+	raise "29"
+}
