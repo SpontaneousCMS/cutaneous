@@ -1,14 +1,14 @@
 
 module Cutaneous
+  # Manages a set of Loaders that render templates
   class Engine
-    def initialize(template_roots, lexer_class)
-      @roots, @lexer_class = Array(template_roots), lexer_class
-    end
+    attr_accessor :loader_class
 
-    def loader(format)
-      @loader ||= Loader.new(@roots, format).tap do |loader|
-        loader.lexer_class = @lexer_class
-      end
+    def initialize(template_roots, lexer_class)
+      @roots        = Array(template_roots)
+      @lexer_class  = lexer_class
+      @loader_class = FileLoader
+      @loaders      = {}
     end
 
     def render_file(path, format, context)
