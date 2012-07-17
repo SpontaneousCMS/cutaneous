@@ -17,4 +17,3 @@ describe Cutaneous do
     result.must_equal ["da", "db", "dc", "ed\n\n"].join("\n\n")
   end
 end
-
