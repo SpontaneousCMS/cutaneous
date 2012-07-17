@@ -1,0 +1,4 @@
+%{ extends "d" }
+%{ block :d }
+ed
+%{ endblock }

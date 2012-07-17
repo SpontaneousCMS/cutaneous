@@ -1,0 +1,8 @@
+da
+%{ block :b }
+db
+%{ endblock :b }
+dc
+%{ block :d }
+%{ raise "WRONG" }
+%{ endblock :d }
