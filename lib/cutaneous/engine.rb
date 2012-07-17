@@ -6,7 +6,7 @@ module Cutaneous
     end
 
     def loader(format)
-      @loader ||= TemplateLoader.new(@roots, format).tap do |loader|
+      @loader ||= Loader.new(@roots, format).tap do |loader|
         loader.lexer_class = @lexer_class
       end
     end

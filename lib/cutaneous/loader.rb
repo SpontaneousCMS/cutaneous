@@ -1,6 +1,6 @@
 
 module Cutaneous
-  class TemplateLoader
+  class Loader
     attr_accessor :lexer_class
 
     def initialize(template_roots, format, extension = "cut")
