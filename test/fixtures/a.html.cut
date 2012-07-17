@@ -1,0 +1,13 @@
+aa
+%{ block :b }
+ab
+%{ endblock }
+ac
+%{ block :d }
+ad
+%{ endblock :d }
+ae
+%{ block :f }
+af
+%{ endblock :f }
+ag

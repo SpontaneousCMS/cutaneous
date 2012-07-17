@@ -1,0 +1,7 @@
+%{ extends "a" }
+%{ block :b }
+bb
+%{ endblock }
+%{ block :f }
+bf
+%{ endblock }

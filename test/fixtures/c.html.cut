@@ -1,0 +1,8 @@
+%{ extends "b" }
+%{ block :b }
+%{ blocksuper }
+cb
+%{ endblock }
+%{ block :f }
+cf
+%{ endblock }
