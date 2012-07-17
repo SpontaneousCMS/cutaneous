@@ -1,0 +1,3 @@
+%{ include "partial" -}
+%{ include "partial", right: "wrong" -}
+%{ include "partial", right: "left" -}

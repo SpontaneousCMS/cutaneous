@@ -29,6 +29,21 @@ describe Cutaneous do
     result.must_equal expected
   end
 
-  it "Allows you to include other templates"
-  it "Honors the format parameter"
+  it "Allows you to include other templates and pass them parameters" do
+    context = ContextHash(right: "right")
+    result = engine.render("include", "html", context)
+    result.must_equal "right = right\nright = wrong\nright = left\n"
+  end
+
+  it "Honors the format parameter" do
+    context = ContextHash(right: "right")
+    result = engine.render("include", "rss", context)
+    result.must_equal "right = rss\nwrong = rss\nleft = rss\n"
+  end
+
+  it "Passes instance variables onto includes" do
+    context = ContextHash(right: "right")
+    result = engine.render("instance", "html", context)
+    result.must_equal "left = wrong\n"
+  end
 end

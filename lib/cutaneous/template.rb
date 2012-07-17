@@ -11,6 +11,7 @@ module Cutaneous
     end
 
     def render(context)
+      context.__loader = loader
       context.instance_eval(&template_proc)
     end
 
