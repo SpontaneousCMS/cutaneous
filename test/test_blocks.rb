@@ -7,7 +7,8 @@ describe Cutaneous do
   it "Will parse & execute a simple template with expressions" do
     context = ContextHash(right: "right", code: "<tag/>")
     result = engine.render("c", "html", context)
-    result.must_equal ["aa\n", "bb", "cb", "ac", "ad", "ae", "cf", "ag\n"].join("\n\n")
+    expected = ["aa\n\n", "ab", "bb", "cb", "ac", "ad", "ae", "cf", "ag\n"].join("\n\n")
+    result.must_equal expected
   end
 
   it "Won't run code in inherited templates unless called" do
