@@ -4,9 +4,9 @@ module Cutaneous
   class Context < Delegator
     attr_accessor :__buf, :__loader
 
-    def initialize(target, params = {})
+    def initialize(target, locals = {})
       super(target)
-      @__target, @__params = target, params
+      @__target, @__locals = target, locals
     end
 
     def __setobj__(obj)
@@ -25,24 +25,24 @@ module Cutaneous
       value
     end
 
-    def include(template_name, params = {})
-      context = self.dup.__update_with_hash(params)
-      __buf <<  __loader.template(template_name).render(context)
+    def include(template_name, locals = {})
+      context = self.dup.__update_with_hash(locals)
+      self.__buf  << __loader.template(template_name).render(context)
     end
 
     def respond_to?(name)
-      return true if @__params.key?(name.to_s) || @__params.key?(name.to_sym)
+      return true if @__locals.key?(name.to_s) || @__locals.key?(name.to_sym)
       super
     end
 
     def method_missing(name, *args)
-      return @__params[name.to_s]   if @__params.key?(name.to_s)
-      return @__params[name.to_sym] if @__params.key?(name.to_sym)
+      return @__locals[name.to_s]   if @__locals.key?(name.to_s)
+      return @__locals[name.to_sym] if @__locals.key?(name.to_sym)
       super
     end
 
-    def __update_with_hash(params)
-      @__params.update(params)
+    def __update_with_hash(locals)
+      @__locals.update(locals)
       self
     end
   end
