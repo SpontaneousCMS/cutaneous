@@ -11,13 +11,13 @@ module Cutaneous
       @loaders      = {}
     end
 
-    def render_file(path, format, context)
+    def render_file(path, context, format = "html")
       template_file(path, format).render(context)
     end
 
     alias_method :render, :render_file
 
-    def render_string(template_string, format, context)
+    def render_string(template_string, context, format = "html")
       template_string(template_string, format).render(context)
     end
 

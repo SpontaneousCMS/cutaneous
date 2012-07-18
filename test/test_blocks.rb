@@ -6,14 +6,14 @@ describe Cutaneous do
 
   it "Will parse & execute a simple template with expressions" do
     context = ContextHash(right: "right", code: "<tag/>")
-    result = engine.render("c", "html", context)
+    result = engine.render("c", context, "html")
     expected = ["aa\n\n", "ab", "bb", "cb", "ac", "ad", "ae", "cf", "ag\n"].join("\n\n")
     result.must_equal expected
   end
 
   it "Won't run code in inherited templates unless called" do
     context = ContextHash(right: "right", code: "<tag/>")
-    result = engine.render("e", "html", context)
+    result = engine.render("e", context, "html")
     result.must_equal ["da", "db", "dc", "ed\n\n"].join("\n\n")
   end
 end
