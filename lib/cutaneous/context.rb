@@ -30,6 +30,11 @@ module Cutaneous
       self.__buf  << __loader.template(template_name).render(context)
     end
 
+    def render(object, template)
+      context = self.class.new(object)
+      self.__buf << __loader.render(template, context)
+    end
+
     def respond_to?(name)
       return true if @__locals.key?(name.to_s) || @__locals.key?(name.to_sym)
       super

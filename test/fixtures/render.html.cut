@@ -1,0 +1,6 @@
+%{
+	require 'ostruct'
+	target = OpenStruct.new
+  target.name = "John"
+-}
+%{ render target, "target" -}

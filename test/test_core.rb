@@ -127,4 +127,10 @@ describe Cutaneous do
     result = engine.render("include", context)
     result.must_equal "right = rss\nwrong = rss\nleft = rss\n"
   end
+
+  it "Passes render calls within a template to the context's loader" do
+    context = ContextHash(right: "right")
+    result = engine.render("render", context)
+    result.must_equal "John\n"
+  end
 end

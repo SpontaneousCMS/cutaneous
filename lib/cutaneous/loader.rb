@@ -1,5 +1,5 @@
 module Cutaneous
-  # Converts a template path into a Template instance for a particular format
+  # Converts a template path or Proc into a Template instance for a particular format
   class FileLoader
     attr_accessor :lexer_class
     attr_writer   :template_class
@@ -9,7 +9,12 @@ module Cutaneous
       @template_class = Template
     end
 
+    def render(template, context)
+      template(template).render(context)
+    end
+
     def template(template)
+      return proc_template(template) if template.is_a?(Proc)
       template_path = path(template)
       raise UnknownTemplateError.new(@roots, template) if template_path.nil?
 
@@ -17,6 +22,10 @@ module Cutaneous
         template.path   = template_path
         template.loader = self
       end
+    end
+
+    def proc_template(lmda)
+      StringLoader.new(self).template(lmda.call)
     end
 
     def file_lexer(template_path)
@@ -40,6 +49,10 @@ module Cutaneous
   class StringLoader < FileLoader
     def initialize(file_loader)
       @file_loader = file_loader
+    end
+
+    def lexer_class
+      @file_loader.lexer_class
     end
 
     def template(template_string)

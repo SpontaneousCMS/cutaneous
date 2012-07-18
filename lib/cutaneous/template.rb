@@ -17,7 +17,7 @@ module Cutaneous
 
     def template_proc
       @template_proc ||= eval(template_proc_src, nil, path || "(cutaneous)").tap do |proc|
-        @lexer = nil
+        @lexer = nil # release any memory used by the lexer, we don't need it anymore
       end
     end
 

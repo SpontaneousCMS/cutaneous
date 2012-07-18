@@ -12,21 +12,14 @@ module Cutaneous
       @loaders        = {}
     end
 
-    def render(path_or_proc, context, format = default_format)
-      case path_or_proc
-      when String
-        render_file(path_or_proc, context, format)
-      when Proc
-        render_string(path_or_proc.call, context, format)
-      end
+    def render_file(path, context, format = default_format)
+      file_loader(format).render(path, context)
     end
 
-    def render_file(path, context, format = default_format)
-      template_file(path, format).render(context)
-    end
+    alias_method :render, :render_file
 
     def render_string(template_string, context, format = default_format)
-      template_string(template_string, format).render(context)
+      string_loader(format).render(template_string, context)
     end
 
     # Create and cache a file loader on a per-format basis
@@ -39,19 +32,7 @@ module Cutaneous
     # Not worth caching string templates as they are most likely to be one-off
     # instances & not repeated in the lifetime of the engine.
     def string_loader(format)
-      StringLoader.new(file_loader(format)).tap do |loader|
-        loader.lexer_class = @lexer_class
-      end
-    end
-
-    def template_file(path, format = default_format)
-      loader = file_loader(format)
-      loader.template(path)
-    end
-
-    def template_string(template_string, format = default_format)
-      loader = string_loader(format)
-      loader.template(template_string)
+      StringLoader.new(file_loader(format))
     end
   end
 
