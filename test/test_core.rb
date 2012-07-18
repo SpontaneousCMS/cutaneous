@@ -112,4 +112,11 @@ describe Cutaneous do
     filename.must_equal File.join(template_root, "other/error.html.cut")
     line.must_equal message
   end
+
+  it "Renders proc instances as strings" do
+    context = ContextHash(right: "wrong")
+    template = proc { "right" }
+    result = engine.render(template, context, "rss")
+    result.must_equal "right"
+  end
 end
