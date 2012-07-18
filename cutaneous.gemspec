@@ -13,7 +13,7 @@ Gem::Specification.new do |s|
   ## If your rubyforge_project name is different, then edit it and comment out
   ## the sub! line in the Rakefile
   s.name              = 'cutaneous'
-  s.version           = '0.0.1-alpha'
+  s.version           = '0.0.1.alpha.1'
   s.date              = '2012-07-18'
   s.rubyforge_project = 'cutaneous'
 
@@ -84,7 +84,9 @@ Gem::Specification.new do |s|
     test/fixtures/other/error.html.cut
     test/fixtures/partial.html.cut
     test/fixtures/partial.rss.cut
+    test/fixtures/render.html.cut
     test/fixtures/statements.html.cut
+    test/fixtures/target.html.cut
     test/fixtures/whitespace.html.cut
     test/helper.rb
     test/test_blocks.rb

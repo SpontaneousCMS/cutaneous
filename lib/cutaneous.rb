@@ -6,7 +6,7 @@ require 'cutaneous/lexer'
 require 'cutaneous/compiler'
 
 module Cutaneous
-  VERSION = "0.0.1-alpha"
+  VERSION = "0.0.1.alpha.1"
 
   class CompilationError < Exception; end
   class UnknownTemplateError < Exception
