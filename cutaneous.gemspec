@@ -13,8 +13,8 @@ Gem::Specification.new do |s|
   ## If your rubyforge_project name is different, then edit it and comment out
   ## the sub! line in the Rakefile
   s.name              = 'cutaneous'
-  s.version           = '0.0.1'
-  s.date              = '2010-01-01'
+  s.version           = '0.0.1-alpha'
+  s.date              = '2012-07-18'
   s.rubyforge_project = 'cutaneous'
 
   ## Make sure your summary is short. The description may be as long
@@ -53,7 +53,44 @@ Gem::Specification.new do |s|
   ## contents of your Git repository via the gemspec task. DO NOT REMOVE
   ## THE MANIFEST COMMENTS, they are used as delimiters by the task.
   # = MANIFEST =
-  s.files = %w[]
+  s.files = %w[
+    Gemfile
+    LICENSE
+    README.md
+    Rakefile
+    cutaneous.gemspec
+    lib/cutaneous.rb
+    lib/cutaneous/compiler.rb
+    lib/cutaneous/compiler/expression.rb
+    lib/cutaneous/context.rb
+    lib/cutaneous/engine.rb
+    lib/cutaneous/lexer.rb
+    lib/cutaneous/loader.rb
+    lib/cutaneous/template.rb
+    test/fixtures/a.html.cut
+    test/fixtures/b.html.cut
+    test/fixtures/c.html.cut
+    test/fixtures/comments.html.cut
+    test/fixtures/d.html.cut
+    test/fixtures/e.html.cut
+    test/fixtures/error.html.cut
+    test/fixtures/expressions.html.cut
+    test/fixtures/include.html.cut
+    test/fixtures/include.rss.cut
+    test/fixtures/included_error.html.cut
+    test/fixtures/instance.html.cut
+    test/fixtures/instance_include.html.cut
+    test/fixtures/other/different.html.cut
+    test/fixtures/other/error.html.cut
+    test/fixtures/partial.html.cut
+    test/fixtures/partial.rss.cut
+    test/fixtures/statements.html.cut
+    test/fixtures/whitespace.html.cut
+    test/helper.rb
+    test/test_blocks.rb
+    test/test_cache.rb
+    test/test_core.rb
+  ]
   # = MANIFEST =
 
   ## Test files will be grabbed from the file list. Make sure the path glob
