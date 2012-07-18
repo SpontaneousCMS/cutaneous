@@ -1,5 +1,5 @@
 module Cutaneous
-  # Converts a template path into a Template instance
+  # Converts a template path into a Template instance for a particular format
   class FileLoader
     attr_accessor :lexer_class
     attr_writer   :template_class

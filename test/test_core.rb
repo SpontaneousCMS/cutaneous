@@ -119,4 +119,11 @@ describe Cutaneous do
     result = engine.render(template, context, "rss")
     result.must_equal "right"
   end
+
+  it "Allows for configuration of the engine's default format" do
+    engine.default_format = "rss"
+    context = ContextHash(right: "right")
+    result = engine.render("include", context)
+    result.must_equal "right = rss\nwrong = rss\nleft = rss\n"
+  end
 end
