@@ -33,19 +33,6 @@ module Cutaneous
     end
   end
 
-  # Converts a filepath to a template string as and when necessary
-  class SourceFile
-    attr_reader :path
-
-    def initialize(filepath)
-      @path = filepath
-    end
-
-    def to_s
-      File.read(@path)
-    end
-  end
-
   # Converts a template string into a Template instance.
   #
   # Because a string template can only come from the engine instance
@@ -59,6 +46,19 @@ module Cutaneous
       Template.new(lexer(template_string)).tap do |template|
         template.loader = @file_loader
       end
+    end
+  end
+
+  # Converts a filepath to a template string as and when necessary
+  class SourceFile
+    attr_reader :path
+
+    def initialize(filepath)
+      @path = filepath
+    end
+
+    def to_s
+      File.read(@path)
     end
   end
 
