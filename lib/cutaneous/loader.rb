@@ -38,6 +38,7 @@ module Cutaneous
 
     def path(template_name)
       filename = [template_name, @format, @extension].join(".")
+      return filename if ::File.exists?(filename) # Test for an absolute path
       @roots.map { |root| ::File.join(root, filename)}.detect { |path| ::File.exists?(path) }
     end
   end

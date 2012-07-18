@@ -132,4 +132,10 @@ describe Cutaneous do
     result = engine.render("render", context)
     result.must_equal "John\n"
   end
+
+  it "Accepts absolute template paths" do
+    context = ContextHash(right: "right", code: "<tag/>")
+    result = engine.render(File.join(template_root, "expressions"), context)
+    result.must_equal "This is right &lt;tag/&gt;\n"
+  end
 end
