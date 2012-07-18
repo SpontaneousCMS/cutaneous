@@ -1,7 +1,7 @@
 require 'cutaneous/engine'
+require 'cutaneous/template'
 require 'cutaneous/loader'
 require 'cutaneous/context'
-require 'cutaneous/template'
 require 'cutaneous/lexer'
 require 'cutaneous/compiler'
 

@@ -2,23 +2,25 @@ module Cutaneous
   # Converts a template path into a Template instance
   class FileLoader
     attr_accessor :lexer_class
+    attr_writer   :template_class
 
     def initialize(template_roots, format, extension = "cut")
       @roots, @format, @extension = template_roots, format, extension
+      @template_class = Template
     end
 
     def template(template)
       template_path = path(template)
       raise UnknownTemplateError.new(@roots, template) if template_path.nil?
 
-      Template.new(file_lexer(template_path)).tap do |template|
+      @template_class.new(file_lexer(template_path)).tap do |template|
         template.path   = template_path
         template.loader = self
       end
     end
 
     def file_lexer(template_path)
-      lexer(::File.read(template_path))
+      lexer(SourceFile.new(template_path))
     end
 
     def lexer(template_string)
@@ -28,6 +30,19 @@ module Cutaneous
     def path(template_name)
       filename = [template_name, @format, @extension].join(".")
       @roots.map { |root| ::File.join(root, filename)}.detect { |path| ::File.exists?(path) }
+    end
+  end
+
+  # Converts a filepath to a template string as and when necessary
+  class SourceFile
+    attr_reader :path
+
+    def initialize(filepath)
+      @path = filepath
+    end
+
+    def to_s
+      File.read(@path)
     end
   end
 
@@ -47,7 +62,13 @@ module Cutaneous
     end
   end
 
+  # Caches Template instances
   class CachedFileLoader < FileLoader
+    def initialize(template_roots, format, extension = "cut")
+      super
+      @template_class = CachedTemplate
+    end
+
     def template_cache
       @template_cache ||= {}
     end
@@ -55,6 +76,40 @@ module Cutaneous
     def template(template)
       return template_cache[template] if template_cache.key?(template)
       template_cache[template] = super
+    end
+  end
+
+  # Provides an additional caching mechanism by writing generated template
+  # scripts to a .rb file.
+  class CachedTemplate < Template
+    def script
+      if cached?
+        script = File.read(script_path)
+      else
+        script = super
+        File.open(script_path, "w") do |f|
+          f.write(script)
+        end
+      end
+      script
+    end
+
+    def cached?
+      File.exist?(script_path)
+    end
+
+    def template_path
+      lexer.template.path
+    end
+
+    def script_path
+      @source_path ||= generate_script_path
+    end
+
+    def generate_script_path
+      path = template_path
+      ext  = File.extname path
+      path.gsub(/#{ext}$/, ".rb")
     end
   end
 end

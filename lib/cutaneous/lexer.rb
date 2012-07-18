@@ -46,6 +46,8 @@ module Cutaneous
 
     extend ClassMethods
 
+    attr_reader :template
+
     def initialize(template)
       @template = template
     end
@@ -65,7 +67,7 @@ module Cutaneous
 
     def parse
       tokens    = []
-      scanner   = StringScanner.new(@template)
+      scanner   = StringScanner.new(@template.to_s)
       tag_start = self.class.tag_start_pattern
       tags      = self.class.tags
       token_map = self.class.token_map

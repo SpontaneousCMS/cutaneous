@@ -43,4 +43,11 @@ module Cutaneous
       loader.template(template_string)
     end
   end
+
+  class CachingEngine < Engine
+    def initialize(template_roots, lexer_class)
+      super
+      @loader_class = CachedFileLoader
+    end
+  end
 end
