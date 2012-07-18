@@ -56,7 +56,7 @@ module Cutaneous
   end
 
   class CachingEngine < Engine
-    def initialize(template_roots, lexer_class)
+    def initialize(template_roots, lexer_class, default_format = "html")
       super
       @loader_class = CachedFileLoader
     end

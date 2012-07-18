@@ -118,14 +118,14 @@ module Cutaneous
     end
   end
 
-  PublishLexer = Cutaneous::Lexer.generate({
+  FirstPassLexer = Cutaneous::Lexer.generate({
     :comment => %w(!{ }),
     :expression => %w(${ }),
     :escaped_expression => %w($${ }),
     :statement => %w(%{ })
   })
 
-  RequestLexer = Cutaneous::Lexer.generate({
+  SecondPassLexer = Cutaneous::Lexer.generate({
     :comment => %w(!{ }),
     :expression => %w({{ }}),
     :escaped_expression => %w({$ $}),

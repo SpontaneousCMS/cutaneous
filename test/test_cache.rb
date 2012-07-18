@@ -8,7 +8,7 @@ describe Cutaneous do
   let(:engine)               { cached_engine }
 
   def cached_engine
-    Cutaneous::CachingEngine.new(dest_template_root, Cutaneous::PublishLexer)
+    Cutaneous::CachingEngine.new(dest_template_root, Cutaneous::FirstPassLexer, "html")
   end
 
   def template(source, format = "html")
@@ -34,13 +34,13 @@ describe Cutaneous do
     templates.each do |t|
       template(t)
     end
-    result1 = engine.render("c", context, "html")
+    result1 = engine.render("c", context)
 
     templates.each do |t|
       remove_template(t)
     end
 
-    result2 = engine.render("c", context, "html")
+    result2 = engine.render("c", context)
     result2.must_equal result1
   end
 
@@ -50,7 +50,7 @@ describe Cutaneous do
     templates.each do |t|
       template(t)
     end
-    result1 = engine.render("c", context, "html")
+    result1 = engine.render("c", context)
 
     # Ensure that the cached script file is being used by overwriting its contents
     path = template_path("c")
@@ -61,7 +61,7 @@ describe Cutaneous do
     end
 
     engine = cached_engine
-    result2 = engine.render("c", context, "html")
+    result2 = engine.render("c", context)
     result2.must_equal "right"
   end
 end
