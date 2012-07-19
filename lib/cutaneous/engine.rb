@@ -23,7 +23,7 @@ module Cutaneous
 
     # Create and cache a file loader on a per-format basis
     def file_loader(format)
-      loader_class.new(@roots, format).tap do |loader|
+      file_loader_instance(format.to_s).tap do |loader|
         loader.lexer_class = @lexer_class
       end
     end
@@ -33,8 +33,15 @@ module Cutaneous
     def string_loader(format)
       StringLoader.new(file_loader(format))
     end
+
+    protected
+
+    def file_loader_instance(format)
+      loader_class.new(@roots, format)
+    end
   end
 
+  # A caching version of the default Engine implementation
   class CachingEngine < Engine
     def initialize(template_roots, lexer_class, default_format = "html")
       super
@@ -42,8 +49,8 @@ module Cutaneous
       @loaders      = {}
     end
 
-    def file_loader(format)
-      @loaders[format.to_s] ||= super
+    def file_loader_instance(format)
+      @loaders[format] ||= super
     end
   end
 end
