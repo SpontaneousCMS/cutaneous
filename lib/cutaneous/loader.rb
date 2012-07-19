@@ -4,7 +4,7 @@ module Cutaneous
     attr_accessor :lexer_class
     attr_writer   :template_class
 
-    def initialize(template_roots, format, extension = "cut")
+    def initialize(template_roots, format, extension = Cutaneous.extension)
       @roots, @format, @extension = template_roots, format, extension
       @template_class = Template
     end
@@ -78,7 +78,7 @@ module Cutaneous
 
   # Caches Template instances
   class CachedFileLoader < FileLoader
-    def initialize(template_roots, format, extension = "cut")
+    def initialize(template_roots, format, extension = Cutaneous.extension)
       super
       @template_class = CachedTemplate
     end
