@@ -9,7 +9,6 @@ module Cutaneous
       @lexer_class    = lexer_class
       @loader_class   = FileLoader
       @default_format = default_format
-      @loaders        = {}
     end
 
     def render_file(path, context, format = default_format)
@@ -24,7 +23,7 @@ module Cutaneous
 
     # Create and cache a file loader on a per-format basis
     def file_loader(format)
-      @loaders[format.to_s] ||= loader_class.new(@roots, format).tap do |loader|
+      loader_class.new(@roots, format).tap do |loader|
         loader.lexer_class = @lexer_class
       end
     end
@@ -40,6 +39,11 @@ module Cutaneous
     def initialize(template_roots, lexer_class, default_format = "html")
       super
       @loader_class = CachedFileLoader
+      @loaders      = {}
+    end
+
+    def file_loader(format)
+      @loaders[format.to_s] ||= super
     end
   end
 end
