@@ -132,4 +132,11 @@ describe Cutaneous do
     result = engine.render(File.join(template_root, "expressions"), context)
     result.must_equal "This is right &lt;tag/&gt;\n"
   end
+
+  it "Tests for the existence of a template file for a certain format" do
+    assert engine.template_exists?(template_root, "expressions", "html")
+    assert engine.template_exists?(template_root, "other/error", "html")
+    assert engine.template_exists?(template_root, "include", "rss")
+    refute engine.template_exists?(template_root, "missing", "rss")
+  end
 end

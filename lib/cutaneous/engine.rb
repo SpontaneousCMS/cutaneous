@@ -34,6 +34,10 @@ module Cutaneous
       StringLoader.new(file_loader(format))
     end
 
+    def template_exists?(root, relative_path, format)
+      file_loader(format).exists?(root, relative_path)
+    end
+
     protected
 
     def file_loader_instance(format)
