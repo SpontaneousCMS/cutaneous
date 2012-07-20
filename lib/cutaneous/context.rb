@@ -17,7 +17,7 @@ module Cutaneous
       @__target
     end
 
-    def _decode_params(params)
+    def __decode_params(params)
       params.to_s
     end
 

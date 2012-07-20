@@ -6,7 +6,7 @@ module Cutaneous
       end
 
       def to_script
-        %{__buf << _decode_params((} << @expression << %{)) ; }
+        %{__buf << __decode_params((} << @expression << %{)) ; }
       end
 
       def affect(builder)
@@ -16,7 +16,7 @@ module Cutaneous
 
     class EscapedExpression < Expression
       def to_script
-        %{__buf << escape(_decode_params((} << @expression << %{))) ; }
+        %{__buf << escape(__decode_params((} << @expression << %{))) ; }
       end
     end
 
