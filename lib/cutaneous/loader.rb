@@ -118,7 +118,7 @@ module Cutaneous
     end
 
     def cached?
-      File.exist?(script_path)
+      File.exist?(script_path) && (File.mtime(script_path) >= File.mtime(template_path))
     end
 
     def template_path
