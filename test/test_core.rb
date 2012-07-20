@@ -127,12 +127,6 @@ describe Cutaneous do
     result.must_equal "right = rss\nwrong = rss\nleft = rss\n"
   end
 
-  it "Passes render calls within a template to the context's loader" do
-    context = ContextHash(right: "right")
-    result = engine.render("render", context)
-    result.must_equal "John\n"
-  end
-
   it "Accepts absolute template paths" do
     context = ContextHash(right: "right", code: "<tag/>")
     result = engine.render(File.join(template_root, "expressions"), context)
