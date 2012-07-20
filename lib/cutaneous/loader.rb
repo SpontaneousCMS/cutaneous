@@ -3,6 +3,7 @@ module Cutaneous
   class FileLoader
     attr_accessor :lexer_class
     attr_writer   :template_class
+    attr_reader   :format
 
     def initialize(template_roots, format, extension = Cutaneous.extension)
       @roots, @format, @extension = template_roots, format, extension

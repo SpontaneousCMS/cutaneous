@@ -2,7 +2,7 @@ require 'delegate'
 
 module Cutaneous
   class Context < Delegator
-    attr_accessor :__buf, :__loader
+    attr_accessor :__buf, :__loader, :__target
 
     def initialize(target, locals = {})
       super(target)
