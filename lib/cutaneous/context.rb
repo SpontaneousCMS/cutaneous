@@ -2,19 +2,12 @@ require 'delegate'
 
 module Cutaneous
   class Context < Delegator
-    attr_accessor :__buf, :__loader, :__target
+    attr_accessor :__buf, :__loader, :__target, :__locals
 
-    def initialize(target, locals = {})
+    def initialize(target, locals_or_context = {})
       super(target)
-      @__target, @__locals = target, locals
-    end
-
-    def __setobj__(obj)
-      @__target = obj
-    end
-
-    def __getobj__
-      @__target
+      @__target, @__locals = target, {}
+      __update_context(locals_or_context)
     end
 
     def __decode_params(params)
@@ -26,7 +19,7 @@ module Cutaneous
     end
 
     def include(template_name, locals = {})
-      context = self.dup.__update_with_hash(locals)
+      context = self.dup.__update_with_locals(locals)
       self.__buf  << __loader.template(template_name).render(context)
     end
 
@@ -41,9 +34,31 @@ module Cutaneous
       super
     end
 
-    def __update_with_hash(locals)
+    def __update_context(parent)
+      case parent
+      when Hash
+        __update_with_locals(parent)
+      when Cutaneous::Context
+        parent.instance_variables.reject { |var| /^@__/o === var.to_s }.each do |variable|
+          instance_variable_set(variable, parent.instance_variable_get(variable))
+        end
+        __update_with_locals(parent.__locals) if parent.respond_to?(:__locals)
+      end
+    end
+
+    def __update_with_locals(locals)
       @__locals.update(locals)
       self
+    end
+
+    # Required by the Delegator class
+    def __setobj__(obj)
+      @__target = obj
+    end
+
+    # Required by the Delegator class
+    def __getobj__
+      @__target
     end
   end
 end

@@ -139,4 +139,30 @@ describe Cutaneous do
     assert engine.template_exists?(template_root, "include", "rss")
     refute engine.template_exists?(template_root, "missing", "rss")
   end
+
+  it "Passes any instance variables & locals between contexts" do
+    context = ContextHash(right: "left")
+    result1 = engine.render("instance", context)
+    context = ContextHash(context)
+    result2 = engine.render("instance", context)
+    result2.must_equal result1
+  end
+
+  it "Silently discards missing variables" do
+    context = ContextHash(right: "left")
+    result1 = engine.render("missing", context)
+    result1.must_equal "missing: \n"
+  end
+
+  it "Overwrites object methods with parameters" do
+    klass = Class.new(Object) do
+      def monkey; "see"; end
+    end
+    context = TestContext.new(klass.new)
+    result = engine.render_string("${ monkey }", context)
+    result.must_equal "see"
+    context = TestContext.new(klass.new, monkey: "magic")
+    result = engine.render_string("${ monkey }", context)
+    result.must_equal "magic"
+  end
 end
