@@ -23,7 +23,12 @@ module Cutaneous
       self.__buf  << __loader.template(template_name).render(context)
     end
 
-    def respond_to?(name)
+    def respond_to_missing?(name, include_private = false)
+      return true if @__locals.key?(name.to_s) || @__locals.key?(name.to_sym)
+      super
+    end
+
+    def respond_to?(name, include_private = false)
       return true if @__locals.key?(name.to_s) || @__locals.key?(name.to_sym)
       super
     end
