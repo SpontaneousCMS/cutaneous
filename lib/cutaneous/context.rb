@@ -32,6 +32,12 @@ module Cutaneous
       return @__locals[name.to_s]   if @__locals.key?(name.to_s)
       return @__locals[name.to_sym] if @__locals.key?(name.to_sym)
       super
+    rescue NameError => e
+      __handle_error(e)
+    end
+
+    def __handle_error(e)
+      # Default behaviour is to silently discard errors
     end
 
     def __update_context(parent)
