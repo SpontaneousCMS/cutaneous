@@ -88,4 +88,17 @@ describe Cutaneous do
     result1 = engine.render("c", context)
     result1.must_equal "template"
   end
+
+  it "Doesn't write a compiled script file if configured not to do so" do
+    engine.write_compiled_scripts = false
+    templates = %w(a b c)
+    templates.each do |t|
+      template(t)
+    end
+    context = ContextHash(right: "right")
+
+    result1 = engine.render("c", context)
+    script_path   = template_path("c", "html", "rb")
+    refute ::File.exists?(script_path), "Template cache should not have created '#{script_path}'"
+  end
 end
