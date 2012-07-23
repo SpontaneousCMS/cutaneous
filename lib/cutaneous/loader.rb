@@ -17,7 +17,7 @@ module Cutaneous
     def template(template)
       return proc_template(template) if template.is_a?(Proc)
       template_path = path(template)
-      raise UnknownTemplateError.new(@roots, template) if template_path.nil?
+      raise UnknownTemplateError.new(@roots, filename(template)) if template_path.nil?
 
       @template_class.new(file_lexer(template_path)).tap do |template|
         template.path   = template_path
