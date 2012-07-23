@@ -87,33 +87,34 @@ module Cutaneous
 
   # Caches Template instances
   class CachedFileLoader < FileLoader
-    attr_accessor :write_compiled_scripts
-
     def initialize(template_roots, format, extension = Cutaneous.extension)
       super
       @template_class = CachedTemplate
-      @write_compiled_scripts = true
     end
 
     def template_cache
       @template_cache ||= {}
     end
 
+    def write_compiled_scripts=(flag)
+      if flag
+        @template_class = CachedTemplate
+      else
+        @template_class = Template
+      end
+    end
+
     def template(template)
       return template_cache[template] if template_cache.key?(template)
-      template_cache[template] = super.tap do |template|
-        template.write_compiled_scripts = write_compiled_scripts
-      end
+      template_cache[template] = super
     end
   end
 
   # Provides an additional caching mechanism by writing generated template
   # scripts to a .rb file.
   class CachedTemplate < Template
-    attr_accessor :write_compiled_scripts
 
     def script
-      return super unless write_compiled_scripts?
       if cached?
         script = File.read(script_path)
       else
@@ -124,8 +125,6 @@ module Cutaneous
       end
       script
     end
-
-    alias_method :write_compiled_scripts?, :write_compiled_scripts
 
     def cached?
       File.exist?(script_path) && (File.mtime(script_path) >= File.mtime(template_path))

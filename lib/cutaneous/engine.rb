@@ -48,7 +48,7 @@ module Cutaneous
 
   # A caching version of the default Engine implementation
   class CachingEngine < Engine
-    attr_accessor :write_compiled_scripts
+    attr_writer :write_compiled_scripts
 
     def initialize(template_roots, lexer_class, default_format = "html")
       super
@@ -59,7 +59,7 @@ module Cutaneous
 
     def file_loader_instance(format)
       @loaders[format] ||= super.tap do |loader|
-        loader.write_compiled_scripts = write_compiled_scripts if loader.respond_to?(:write_compiled_scripts)
+        loader.write_compiled_scripts = @write_compiled_scripts if loader.respond_to?(:write_compiled_scripts=)
       end
     end
   end
