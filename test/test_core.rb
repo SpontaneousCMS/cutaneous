@@ -2,7 +2,7 @@ require File.expand_path('../helper', __FILE__)
 
 describe Cutaneous do
   let(:template_root) { File.expand_path("../fixtures", __FILE__)                     }
-  let(:engine)        { Cutaneous::Engine.new(template_root, Cutaneous::FirstPassLexer, "html") }
+  let(:engine)        { Cutaneous::Engine.new(template_root, Cutaneous::FirstPassSyntax, "html") }
 
   it "Will parse & execute a simple template with expressions" do
     context = ContextHash(right: "right", code: "<tag/>")
@@ -60,7 +60,7 @@ describe Cutaneous do
   end
 
   it "Has a configurable lexer class" do
-    engine = Cutaneous::Engine.new(template_root, Cutaneous::SecondPassLexer)
+    engine = Cutaneous::Engine.new(template_root, Cutaneous::SecondPassSyntax)
     context = ContextHash(right: "wrong")
     result = engine.render_string("${ left } = {{ right }}", context)
     result.must_equal "${ left } = wrong"
@@ -69,7 +69,7 @@ describe Cutaneous do
   it "Allows for multiple template roots" do
     roots = Array(template_root)
     roots.push File.join(template_root, "other")
-    engine = Cutaneous::Engine.new(roots, Cutaneous::FirstPassLexer)
+    engine = Cutaneous::Engine.new(roots, Cutaneous::FirstPassSyntax)
     context = ContextHash(right: "wrong")
     result = engine.render_string('%{ include "different" }', context)
     result.must_equal "wrong\n"

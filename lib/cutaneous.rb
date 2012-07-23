@@ -2,6 +2,7 @@ require 'cutaneous/engine'
 require 'cutaneous/template'
 require 'cutaneous/loader'
 require 'cutaneous/context'
+require 'cutaneous/syntax'
 require 'cutaneous/lexer'
 require 'cutaneous/compiler'
 

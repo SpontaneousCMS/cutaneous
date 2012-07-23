@@ -5,9 +5,9 @@ module Cutaneous
     attr_reader   :roots
     attr_accessor :loader_class, :default_format
 
-    def initialize(template_roots, lexer_class, default_format = "html")
+    def initialize(template_roots, syntax, default_format = "html")
       @roots          = Array(template_roots)
-      @lexer_class    = lexer_class
+      @syntax    = syntax
       @loader_class   = FileLoader
       @default_format = default_format
     end
@@ -25,7 +25,7 @@ module Cutaneous
     # Create and cache a file loader on a per-format basis
     def file_loader(format)
       file_loader_instance(format.to_s).tap do |loader|
-        loader.lexer_class = @lexer_class
+        loader.syntax = @syntax
       end
     end
 
@@ -50,7 +50,7 @@ module Cutaneous
   class CachingEngine < Engine
     attr_writer :write_compiled_scripts
 
-    def initialize(template_roots, lexer_class, default_format = "html")
+    def initialize(template_roots, syntax, default_format = "html")
       super
       @loader_class = CachedFileLoader
       @loaders      = {}

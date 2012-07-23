@@ -1,7 +1,7 @@
 module Cutaneous
   # Converts a template path or Proc into a Template instance for a particular format
   class FileLoader
-    attr_accessor :lexer_class
+    attr_accessor :syntax
     attr_writer   :template_class
     attr_reader   :format
 
@@ -34,7 +34,7 @@ module Cutaneous
     end
 
     def lexer(template_string)
-      lexer_class.new(template_string)
+      Lexer.new(template_string, syntax)
     end
 
     def path(template_name)
@@ -61,8 +61,8 @@ module Cutaneous
       @file_loader = file_loader
     end
 
-    def lexer_class
-      @file_loader.lexer_class
+    def syntax
+      @file_loader.syntax
     end
 
     def template(template_string)

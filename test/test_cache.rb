@@ -8,7 +8,7 @@ describe Cutaneous do
   let(:engine)               { cached_engine }
 
   def cached_engine
-    Cutaneous::CachingEngine.new(dest_template_root, Cutaneous::FirstPassLexer, "html")
+    Cutaneous::CachingEngine.new(dest_template_root, Cutaneous::FirstPassSyntax, "html")
   end
 
   def template(source, format = "html")

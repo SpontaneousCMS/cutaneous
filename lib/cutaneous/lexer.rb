@@ -4,52 +4,10 @@ require 'strscan'
 
 module Cutaneous
   class Lexer
-    class << self
-      attr_accessor :tags
-    end
+    attr_reader :template, :syntax
 
-    module ClassMethods
-      def generate(tag_definitions)
-        parser_class = Class.new(Cutaneous::Lexer)
-        parser_class.tags = tag_definitions
-        parser_class
-      end
-
-      def is_dynamic?(text)
-        !text.index(tag_start_pattern).nil?
-      end
-
-
-      def tag_start_pattern
-        @tag_start_pattern ||= compile_start_pattern
-      end
-
-      def escaped_tag_pattern
-        @escaped_tag_pattern ||= compile_start_pattern_with_prefix("\\\\")
-      end
-
-      def compile_start_pattern
-        not_escaped = "(?<!\\\\)"
-        compile_start_pattern_with_prefix(not_escaped)
-      end
-
-      def compile_start_pattern_with_prefix(prefix)
-        openings = self.tags.map { |type, tags| Regexp.escape(tags[0]) }
-        Regexp.new("#{prefix}(#{ openings.join("|") })")
-      end
-      # map the set of tags into a hash used by the parse routine that converts an opening tag into a
-      # list of: tag type, the number of opening braces in the tag and the length of the closing tag
-      def token_map
-        @token_map ||= Hash[tags.map { |type, tags| [tags[0], [type, tags[0].count(?{), tags[1].length]] }]
-      end
-    end
-
-    extend ClassMethods
-
-    attr_reader :template
-
-    def initialize(template)
-      @template = template
+    def initialize(template, syntax)
+      @template, @syntax = template, syntax
     end
 
     def tokens
@@ -68,9 +26,9 @@ module Cutaneous
     def parse
       tokens    = []
       scanner   = StringScanner.new(@template.to_s)
-      tag_start = self.class.tag_start_pattern
-      tags      = self.class.tags
-      token_map = self.class.token_map
+      tag_start = syntax.tag_start_pattern
+      tags      = syntax.tags
+      token_map = syntax.token_map
       previous  = nil
 
       while (text = scanner.scan_until(tag_start))
@@ -112,20 +70,20 @@ module Cutaneous
     ESCAPE_STRING        ||= /[`\\]/
 
     def place_text_token(expression)
-      expression.gsub!(self.class.escaped_tag_pattern, '\1')
+      expression.gsub!(syntax.escaped_tag_pattern, '\1')
       expression.gsub!(ESCAPE_STRING, '\\\\\&')
       [:text, expression]
     end
   end
 
-  FirstPassLexer = Cutaneous::Lexer.generate({
+  FirstPassSyntax = Cutaneous::Syntax.new({
     :comment => %w(!{ }),
     :expression => %w(${ }),
     :escaped_expression => %w($${ }),
     :statement => %w(%{ })
   })
 
-  SecondPassLexer = Cutaneous::Lexer.generate({
+  SecondPassSyntax = Cutaneous::Syntax.new({
     :comment => %w(!{ }),
     :expression => %w({{ }}),
     :escaped_expression => %w({$ $}),
