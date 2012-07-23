@@ -13,8 +13,8 @@ Gem::Specification.new do |s|
   ## If your rubyforge_project name is different, then edit it and comment out
   ## the sub! line in the Rakefile
   s.name              = 'cutaneous'
-  s.version           = '0.0.1.alpha.1'
-  s.date              = '2012-07-18'
+  s.version           = '0.1.0'
+  s.date              = '2012-07-23'
   s.rubyforge_project = 'cutaneous'
 
   ## Make sure your summary is short. The description may be as long
@@ -66,6 +66,7 @@ Gem::Specification.new do |s|
     lib/cutaneous/engine.rb
     lib/cutaneous/lexer.rb
     lib/cutaneous/loader.rb
+    lib/cutaneous/syntax.rb
     lib/cutaneous/template.rb
     test/fixtures/a.html.cut
     test/fixtures/b.html.cut
@@ -80,6 +81,7 @@ Gem::Specification.new do |s|
     test/fixtures/included_error.html.cut
     test/fixtures/instance.html.cut
     test/fixtures/instance_include.html.cut
+    test/fixtures/missing.html.cut
     test/fixtures/other/different.html.cut
     test/fixtures/other/error.html.cut
     test/fixtures/partial.html.cut

@@ -7,7 +7,7 @@ require 'cutaneous/lexer'
 require 'cutaneous/compiler'
 
 module Cutaneous
-  VERSION = "0.0.1.alpha.1"
+  VERSION = "0.1.0"
 
   class CompilationError < Exception; end
 
