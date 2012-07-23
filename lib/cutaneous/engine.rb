@@ -2,6 +2,7 @@
 module Cutaneous
   # Manages a set of Loaders that render templates
   class Engine
+    attr_reader   :roots
     attr_accessor :loader_class, :default_format
 
     def initialize(template_roots, lexer_class, default_format = "html")
