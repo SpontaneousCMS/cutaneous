@@ -131,11 +131,13 @@ If you want to add features to your context, or `helpers` as they would be known
 
 Cutaneous silently swallows errors about missing expressions in templates. If you want to instead report these errors override the `__handle_error` context method:
 
+```ruby
     class MyContext < Cutaneous::Context
       def __handle_error(e)
         logger.warn(e)
       end
     end
+```
 
 Cutaneous will do its best to keep the line numbers consistent between templates and the generated code (although see "Bugs" below...). This will hopefully make debugging easier.
 
