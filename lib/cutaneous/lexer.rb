@@ -75,18 +75,4 @@ module Cutaneous
       [:text, expression]
     end
   end
-
-  FirstPassSyntax = Cutaneous::Syntax.new({
-    :comment => %w(!{ }),
-    :expression => %w(${ }),
-    :escaped_expression => %w($${ }),
-    :statement => %w(%{ })
-  })
-
-  SecondPassSyntax = Cutaneous::Syntax.new({
-    :comment => %w(!{ }),
-    :expression => %w({{ }}),
-    :escaped_expression => %w({$ $}),
-    :statement => %w({% %})
-  })
 end
