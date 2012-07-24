@@ -1,33 +1,70 @@
 require File.expand_path('../helper', __FILE__)
 
-describe Cutaneous do
+describe "First pass parser" do
   let(:template_root) { File.expand_path("../fixtures", __FILE__)                     }
-  let(:engine)        { Cutaneous::Engine.new(template_root, Cutaneous::FirstPassSyntax, "html") }
+  subject { Cutaneous::Engine.new(template_root, Cutaneous::FirstPassSyntax, "html") }
 
-  it "Will parse & execute a simple template with expressions" do
+  it "will parse & execute a simple template with expressions" do
     context = ContextHash(right: "right", code: "<tag/>")
-    result = engine.render("expressions", context)
+    result = subject.render("expressions1", context)
     result.must_equal "This is right &lt;tag/&gt;\n"
   end
 
-  it "Will parse & execute a simple template with statements" do
+  it "will parse & execute a simple template with statements" do
     context = ContextHash(right: "right")
-    result = engine.render("statements", context)
+    result = subject.render("statements1", context)
     result.must_equal "\nThis is right 0\n\nThis is right 1\n\nThis is right 2\n\n"
   end
 
-  it "Will parse & execute a simple template with comments" do
+  it "will parse & execute a simple template with comments" do
     context = ContextHash(right: "right")
-    result = engine.render("comments", context)
+    result = subject.render("comments1", context)
     result.must_equal "\n"
   end
 
-  it "Will remove whitespace after tags with a closing '-'" do
+  it "will remove whitespace after tags with a closing '-'" do
     context = ContextHash(right: "right")
-    result = engine.render("whitespace", context)
+    result = subject.render("whitespace1", context)
     expected = ["aa", "here 0", "here 1", "here 2\n", "ac\n", "ad\n", "ae\n", "af\n", "ag\n"].join("\n")
     result.must_equal expected
   end
+end
+
+describe "Second pass parser" do
+  let(:template_root) { File.expand_path("../fixtures", __FILE__)                     }
+  subject { Cutaneous::Engine.new(template_root, Cutaneous::SecondPassSyntax, "html") }
+
+  it "will parse & execute a simple template with expressions" do
+    context = ContextHash(right: "right", code: "<tag/>")
+    result = subject.render("expressions2", context)
+    result.must_equal "This is right &lt;tag/&gt;\n"
+  end
+
+  it "will parse & execute a simple template with statements" do
+    context = ContextHash(right: "right")
+    result = subject.render("statements2", context)
+    result.must_equal "\nThis is right 0\n\nThis is right 1\n\nThis is right 2\n\n"
+  end
+
+  it "will parse & execute a simple template with comments" do
+    context = ContextHash(right: "right")
+    result = subject.render("comments2", context)
+    result.must_equal "\n"
+  end
+
+  it "will remove whitespace after tags with a closing '-'" do
+    context = ContextHash(right: "right")
+    result = subject.render("whitespace2", context)
+    expected = ["here 0", "here 1", "here 2\n"].join("\n")
+    result.must_equal expected
+  end
+end
+
+describe Cutaneous do
+  let(:template_root) { File.expand_path("../fixtures", __FILE__)                     }
+  let(:engine)        { engine1 }
+  let(:engine1)        { Cutaneous::Engine.new(template_root, Cutaneous::FirstPassSyntax, "html") }
+  let(:engine2)        { Cutaneous::Engine.new(template_root, Cutaneous::SecondPassSyntax, "html") }
 
   it "Allows you to include other templates and pass them parameters" do
     context = ContextHash(right: "right")
@@ -129,12 +166,12 @@ describe Cutaneous do
 
   it "Accepts absolute template paths" do
     context = ContextHash(right: "right", code: "<tag/>")
-    result = engine.render(File.join(template_root, "expressions"), context)
+    result = engine.render(File.join(template_root, "expressions1"), context)
     result.must_equal "This is right &lt;tag/&gt;\n"
   end
 
   it "Tests for the existence of a template file for a certain format" do
-    assert engine.template_exists?(template_root, "expressions", "html")
+    assert engine.template_exists?(template_root, "expressions1", "html")
     assert engine.template_exists?(template_root, "other/error", "html")
     assert engine.template_exists?(template_root, "include", "rss")
     refute engine.template_exists?(template_root, "missing", "rss")
