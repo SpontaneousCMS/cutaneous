@@ -194,12 +194,13 @@ describe Cutaneous do
   it "Overwrites object methods with parameters" do
     klass = Class.new(Object) do
       def monkey; "see"; end
+      def to_s  ; "object"; end
     end
     context = TestContext.new(klass.new)
-    result = engine.render_string("${ monkey }", context)
-    result.must_equal "see"
-    context = TestContext.new(klass.new, monkey: "magic")
-    result = engine.render_string("${ monkey }", context)
-    result.must_equal "magic"
+    result = engine.render_string("${ monkey } ${ to_s }", context)
+    result.must_equal "see object"
+    context = TestContext.new(klass.new, monkey: "magic", to_s: "fairy")
+    result = engine.render_string("${ monkey } ${ to_s }", context)
+    result.must_equal "magic fairy"
   end
 end
