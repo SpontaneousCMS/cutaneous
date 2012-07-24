@@ -1,4 +1,5 @@
 require 'delegate'
+require 'cgi'
 
 module Cutaneous
   class Context < Delegator
@@ -15,7 +16,7 @@ module Cutaneous
     end
 
     def escape(value)
-      value
+      CGI::escapeHTML(value)
     end
 
     def include(template_name, locals = {})
