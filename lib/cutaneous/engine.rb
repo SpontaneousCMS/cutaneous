@@ -5,7 +5,7 @@ module Cutaneous
     attr_reader   :roots
     attr_accessor :loader_class, :default_format
 
-    def initialize(template_roots, syntax, default_format = "html")
+    def initialize(template_roots, syntax = Cutaneous::FirstPassSyntax, default_format = "html")
       @roots          = Array(template_roots)
       @syntax    = syntax
       @loader_class   = FileLoader
