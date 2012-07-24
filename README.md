@@ -1,6 +1,6 @@
 # Cutaneous
 
-Cutaneous is a Ruby templating engine designed for flexibility and simplicity.
+Cutaneous is a Ruby (1.9+) templating engine designed for flexibility and simplicity.
 
 It supports having multiple output formats, multiple syntaxes and borrows a template inheritance mechanism from Python template engines such as  [Django's](https://docs.djangoproject.com/en/dev/topics/templates/), [Jinja](http://jinja.pocoo.org/) and [Mako](http://www.makotemplates.org/).
 
@@ -18,15 +18,15 @@ Cutaneous is the template engine designed for and used by [Spontaneous CMS](http
 
 Cutaneous features a block based template inheritance mechanism.
 
-Including a `%{ extends "parent" }` tag at the start of a template 
+Including a `%{ extends "parent" }` tag at the start of a template
 makes it inherit from the named template ("parent" in this case).
 
 Parent templates define a series of blocks using a `%{ block :block_name}
-... %{ endblock}` syntax. Child templates can then override any of 
+... %{ endblock}` syntax. Child templates can then override any of
 these individual blocks with their own content.
 
-Calling `%{ blocksuper }` within a child template's block allows you 
-to insert the code from the parent template (much like calling `super` 
+Calling `%{ blocksuper }` within a child template's block allows you
+to insert the code from the parent template (much like calling `super`
 in an object subclass).
 
 So for example using the following templates:
@@ -39,12 +39,12 @@ So for example using the following templates:
 
 
     Title
-    
+
     Template inheritance is great!
     Template inheritance is great!
-    
+
     Do it like this...
-    
+
     And like this...
 
 The template hierarchy can be as long as you need/like. Template 'd' could extend 'c' which extends 'b' which extends 'a' etc..
@@ -64,7 +64,7 @@ If your standard format isn't "html" then you can set a new default when creatin
 
 ### Whitespace
 
-If you want to remove trailing whitespace after a tag, then suffix it with a `-` character, e.g. 
+If you want to remove trailing whitespace after a tag, then suffix it with a `-` character, e.g.
 
     %{ include "something" -}
 

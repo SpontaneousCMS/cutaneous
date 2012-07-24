@@ -8,25 +8,28 @@ Gem::Specification.new do |s|
   s.specification_version = 2 if s.respond_to? :specification_version=
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.rubygems_version = '1.3.5'
+  s.required_ruby_version = ">= 1.9.2"
 
   ## Leave these as is they will be modified for you by the rake gemspec task.
   ## If your rubyforge_project name is different, then edit it and comment out
   ## the sub! line in the Rakefile
   s.name              = 'cutaneous'
   s.version           = '0.1.1'
-  s.date              = '2012-07-23'
+  s.date              = '2012-07-24'
   s.rubyforge_project = 'cutaneous'
 
   ## Make sure your summary is short. The description may be as long
   ## as you like.
-  s.summary     = "Short description used in Gem listings."
-  s.description = "Long description. Maybe copied from the README."
+  s.summary     = "A Ruby templating language with template inheritance"
+  s.description = "Cutaneous is the Ruby templating language designed for " \
+    "use with Spontaneous CMS. It has a simple syntax but powerful" \
+    "features such as Djano style template inheritance through blocks."
 
   ## List the primary authors. If there are a bunch of authors, it's probably
   ## better to set the email to an email list or something. If you don't have
   ## a custom homepage, consider using your GitHub URL or the like.
   s.authors  = ["Garry Hill"]
-  s.email    = 'garry@spontaneous.io'
+  s.email    = 'garry@magnetised.net'
   s.homepage = 'https://github.com/SpontaneousCMS/cutaneous'
 
   ## This gets added to the $LOAD_PATH so that 'lib/NAME.rb' can be required as
@@ -71,11 +74,13 @@ Gem::Specification.new do |s|
     test/fixtures/a.html.cut
     test/fixtures/b.html.cut
     test/fixtures/c.html.cut
-    test/fixtures/comments.html.cut
+    test/fixtures/comments1.html.cut
+    test/fixtures/comments2.html.cut
     test/fixtures/d.html.cut
     test/fixtures/e.html.cut
     test/fixtures/error.html.cut
-    test/fixtures/expressions.html.cut
+    test/fixtures/expressions1.html.cut
+    test/fixtures/expressions2.html.cut
     test/fixtures/include.html.cut
     test/fixtures/include.rss.cut
     test/fixtures/included_error.html.cut
@@ -87,9 +92,11 @@ Gem::Specification.new do |s|
     test/fixtures/partial.html.cut
     test/fixtures/partial.rss.cut
     test/fixtures/render.html.cut
-    test/fixtures/statements.html.cut
+    test/fixtures/statements1.html.cut
+    test/fixtures/statements2.html.cut
     test/fixtures/target.html.cut
-    test/fixtures/whitespace.html.cut
+    test/fixtures/whitespace1.html.cut
+    test/fixtures/whitespace2.html.cut
     test/helper.rb
     test/test_blocks.rb
     test/test_cache.rb
