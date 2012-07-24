@@ -20,7 +20,7 @@ Gem::Specification.new do |s|
 
   ## Make sure your summary is short. The description may be as long
   ## as you like.
-  s.summary     = "A Ruby templating language with template inheritance"
+  s.summary     = "A Ruby templating language with Django style template inheritance"
   s.description = "Cutaneous is the Ruby templating language designed for " \
     "use with Spontaneous CMS. It has a simple syntax but powerful" \
     "features such as Djano style template inheritance through blocks."
