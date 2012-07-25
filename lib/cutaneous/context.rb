@@ -20,8 +20,14 @@ module Cutaneous
     end
 
     def include(template_name, locals = {})
-      context = self.dup.__update_with_locals(locals)
+      context = self.clone(locals)
       self.__buf  << __loader.template(template_name).render(context)
+    end
+
+    def clone(locals = {})
+      context = self.class.new(__target, self)
+      context.__update_with_locals(locals)
+      context
     end
 
     def respond_to_missing?(name, include_private = false)

@@ -215,4 +215,10 @@ describe Cutaneous do
     result = engine.render_string("${ monkey } ${ to_s }", context)
     result.must_equal "magic fairy"
   end
+
+  it "Preserves the original context locals after includes" do
+    context = ContextHash({})
+    result = engine.render("locals/parent", context)
+    result.must_equal "Child 1\nChild 2\n\n"
+  end
 end

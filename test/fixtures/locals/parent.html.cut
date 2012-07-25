@@ -1,0 +1,3 @@
+%{ include "locals/child", title: "Child 1" -}
+%{ include "locals/child", title: "Child 2" -}
+${ title }
