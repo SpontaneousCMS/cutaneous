@@ -58,8 +58,26 @@ module Cutaneous
       end
     end
 
+    # Sets up the local variables and also creates singleton methods on this
+    # instance so that the local values will override any method implementations
+    # on the context itself. i.e.:
+    #
+    # class MyContext < Cutanteous::Context
+    #   def monkey
+    #     "puzzle"
+    #   end
+    # end
+    #
+    # context = MyContext.new(Object.new, monkey: "magic")
+    #
+    # context.monkey #=> "magic" not "puzzle"
+    #
     def __update_with_locals(locals)
       @__locals.update(locals)
+      singleton = singleton_class
+      locals.each do |name, value|
+        singleton.__send__(:define_method, name) { value }
+      end
       self
     end
 

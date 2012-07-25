@@ -203,4 +203,16 @@ describe Cutaneous do
     result = engine.render_string("${ monkey } ${ to_s }", context)
     result.must_equal "magic fairy"
   end
+
+  it "Overwrites helper methods with local values" do
+    context_class = Class.new(TestContext) do
+      def monkey
+        "wrong"
+      end
+    end
+    context = context_class.new(Object.new, monkey: "magic", to_s: "fairy")
+    # def context.monkey; "wrong"; end
+    result = engine.render_string("${ monkey } ${ to_s }", context)
+    result.must_equal "magic fairy"
+  end
 end
