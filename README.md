@@ -34,28 +34,28 @@ Cutaneous generally relies upon relative template names. If we consider the foll
 
 ```ruby
 
-    engine  = Cutaneous::Engine.new([
-      "/home/user/templates",
-      "/home/user/shared_templates"
-    ])
-    
-    context = Cutaneous::Context.new(Object.new, title: "Welcome")
-    
-    result  = engine.render("welcome", context, "html")
+engine  = Cutaneous::Engine.new([
+	"/home/user/templates",
+	"/home/user/shared_templates"
+])
+
+context = Cutaneous::Context.new(Object.new, title: "Welcome")
+
+result  = engine.render("welcome", context, "html")
 ```
 
 The `#render` call will look for a file called `welcome.html.cut` under each of the supplied template roots & return the first one it finds:
 
 ```ruby
-    
-    # The template resolution is equivalent to the following Ruby code:
-    search_paths =  [
-      "/home/user/templates/welcome.html.cut",
-      "/home/user/shared_templates/welcome.html.cut"
-    ]
-   
-    template_path = search_paths.detect { |path| File.exist?(path) }
-   
+
+# The template resolution is equivalent to the following Ruby code:
+search_paths =  [
+	"/home/user/templates/welcome.html.cut",
+	"/home/user/shared_templates/welcome.html.cut"
+]
+
+template_path = search_paths.detect { |path| File.exist?(path) }
+
 ```
 
 Template filenames are derived from `[template_relative_path, format, "cut"].join(".")`.
@@ -66,9 +66,9 @@ If you want to organise your templates into subdirectories then you are complete
 
 ```ruby
     
-    result  = engine.render("layouts/welcome", context, "html")
-    
-    #=> Renders the file "/home/user/templates/layouts/welcome.html.cut"
+result  = engine.render("layouts/welcome", context, "html")
+
+#=> Renders the file "/home/user/templates/layouts/welcome.html.cut"
 ```
 
 #### Includes
@@ -86,14 +86,14 @@ Note that Cutaneous has no special treatment of "partials", there is no special 
 If you want to switch between rendering file based & string based templates then Cutaneous provides a way of using the same `Engine#render` call by passing a Proc as the template path:
 
 ```ruby
-    
-    # This
-    template = "Hello ${ name }!"
-    engine.render(Proc.new { template }, context)
-    
-    # is the same as:
-    engine.render_string(template, context)
-   
+
+# This
+template = "Hello ${ name }!"
+engine.render(Proc.new { template }, context)
+
+# is the same as:
+engine.render_string(template, context)
+
 ```
 
 This allows us to use simple strings as template paths and still use a consistent calling mechanism.
@@ -200,20 +200,20 @@ If you want to add features to your context, or `helpers` as they would be known
 
 ```ruby
 
-    module MyHelperMethods
-     def my_helpful_method
-       # ... do something complex that you want to keep out of the template
-     end
-    end
+module MyHelperMethods
+ def my_helpful_method
+	 # ... do something complex that you want to keep out of the template
+ end
+end
 
-    # You *must* inherit from Cutaneous::Context!
-    class MyContext < Cutaneous::Context
-      include MyHelperMethods
-    end
+# You *must* inherit from Cutaneous::Context!
+class MyContext < Cutaneous::Context
+	include MyHelperMethods
+end
 
-    context = MyContext.new(instance, parameter: "value")
+context = MyContext.new(instance, parameter: "value")
 
-    result  = engine.render("template", context)
+result  = engine.render("template", context)
 ```
 
 ### Errors
@@ -221,11 +221,11 @@ If you want to add features to your context, or `helpers` as they would be known
 Cutaneous silently swallows errors about missing expressions in templates. If you want to instead report these errors override the `__handle_error` context method:
 
 ```ruby
-    class MyContext < Cutaneous::Context
-      def __handle_error(e)
-        logger.warn(e)
-      end
-    end
+class MyContext < Cutaneous::Context
+	def __handle_error(e)
+		logger.warn(e)
+	end
+end
 ```
 
 Cutaneous will do its best to keep the line numbers consistent between templates and the generated code (although see "Bugs" below...). This will hopefully make debugging easier.
