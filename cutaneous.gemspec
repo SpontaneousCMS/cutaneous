@@ -22,7 +22,7 @@ Gem::Specification.new do |s|
   ## as you like.
   s.summary     = "A Ruby templating language with Django style template inheritance"
   s.description = "Cutaneous is the Ruby templating language designed for " \
-    "use with Spontaneous CMS. It has a simple syntax but powerful" \
+    "use with Spontaneous CMS. It has a simple syntax but powerful " \
     "features such as Djano style template inheritance through blocks."
 
   ## List the primary authors. If there are a bunch of authors, it's probably
