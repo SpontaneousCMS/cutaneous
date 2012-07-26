@@ -1,5 +1,7 @@
 # Cutaneous
 
+**Cutaneous** _adj._ Of the skin.
+
 Cutaneous is a Ruby (1.9+) templating engine designed for flexibility and simplicity.
 
 It supports having multiple output formats, multiple syntaxes and borrows a template inheritance mechanism from Python template engines such as  [Django's](https://docs.djangoproject.com/en/dev/topics/templates/), [Jinja](http://jinja.pocoo.org/) and [Mako](http://www.makotemplates.org/).
@@ -11,6 +13,91 @@ Cutaneous is the template engine designed for and used by [Spontaneous CMS](http
 <script src="https://gist.github.com/3169319.js"> </script>
 
 <script src="https://gist.github.com/3169327.js"> </script>
+
+The `Cutaneous::Engine` class provides two core methods:
+
+- `Cutaneous::Engine#render(template_path, context, format)`  
+  
+  This renders the template at `template_path` using the context `context` (which must be an instance of Cutaneous::Context (or a subclass)) and the format `format`.
+  
+  `template_path` should be specified as either a relative path which will be resolved using a search through the template roots specified in the engine's initialisation call. See below for more information about how templates are specified & resolved.
+  
+- `Cutaneous::Engine#render_string(template, context, format)`  
+  
+  This takes the input string as the template and renders it. If this string references other templates through includes (see below) these are resolved as if you had made a call to `Engine#render`.
+
+### Template Naming & Resolution
+
+By default Cutaneous templates should be given a `.cut` file extension.
+
+Cutaneous generally relies upon relative template names. If we consider the following code:
+
+```ruby
+
+    engine  = Cutaneous::Engine.new([
+      "/home/user/templates",
+      "/home/user/shared_templates"
+    ])
+    
+    context = Cutaneous::Context.new(Object.new, title: "Welcome")
+    
+    result  = engine.render("welcome", context, "html")
+```
+
+The `#render` call will look for a file called `welcome.html.cut` under each of the supplied template roots & return the first one it finds:
+
+```ruby
+    
+    # The template resolution is equivalent to the following Ruby code:
+    search_paths =  [
+      "/home/user/templates/welcome.html.cut",
+      "/home/user/shared_templates/welcome.html.cut"
+    ]
+   
+    template_path = search_paths.detect { |path| File.exist?(path) }
+   
+```
+
+Template filenames are derived from `[template_relative_path, format, "cut"].join(".")`.
+
+If you specified a different format for the render call, e.g. `engine.render("welcome", context, "txt")` then the engine would instead look for a file named `welcome.txt.cut`.
+
+If you want to organise your templates into subdirectories then you are completely free to do so, you just need to add the subdirectory name onto the relative path:
+
+```ruby
+    
+    result  = engine.render("layouts/welcome", context, "html")
+    
+    #=> Renders the file "/home/user/templates/layouts/welcome.html.cut"
+```
+
+#### Includes
+
+To include one template file into another you use the `include` directive within your template:
+
+    %{ include 'partial/header' }
+
+This will include the output of rendering the file "/home/user/templates/partial/header.html.cut" directly in your original template's output (assuming you're rendering the "html" format).
+
+Note that Cutaneous has no special treatment of "partials", there is no special `partial` command and no preceeding underscore in the template name.
+
+#### Passing a Proc as a Template
+
+If you want to switch between rendering file based & string based templates then Cutaneous provides a way of using the same `Engine#render` call by passing a Proc as the template path:
+
+```ruby
+    
+    # This
+    template = "Hello ${ name }!"
+    engine.render(Proc.new { template }, context)
+    
+    # is the same as:
+    engine.render_string(template, context)
+   
+```
+
+This allows us to use simple strings as template paths and still use a consistent calling mechanism.
+
 
 ## Features
 
@@ -48,6 +135,8 @@ So for example using the following templates:
     And like this...
 
 The template hierarchy can be as long as you need/like. Template 'd' could extend 'c' which extends 'b' which extends 'a' etc..
+
+
 
 ### Formats
 
