@@ -30,8 +30,8 @@ module Cutaneous
 
   SecondPassSyntax = Cutaneous::Syntax.new({
     :comment => %w(!{ }),
-    :expression => %w({{ }}),
-    :escaped_expression => %w({$ $}),
+    :expression => %w({{{ }}}),
+    :escaped_expression => %w({{ }}),
     :statement => %w({% %})
   })
 end

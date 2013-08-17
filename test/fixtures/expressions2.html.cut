@@ -1,1 +1,1 @@
-This is {{  right  }} {$ code $}
+This is {{  right  }} {{ code }} {{{ code }}}

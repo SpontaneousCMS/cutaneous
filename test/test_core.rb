@@ -37,7 +37,7 @@ describe "Second pass parser" do
   it "will parse & execute a simple template with expressions" do
     context = ContextHash(right: "right", code: "<tag/>")
     result = subject.render("expressions2", context)
-    result.must_equal "This is right &lt;tag/&gt;\n"
+    result.must_equal "This is right &lt;tag/&gt; <tag/>\n"
   end
 
   it "will parse & execute a simple template with statements" do
