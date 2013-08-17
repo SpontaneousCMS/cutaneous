@@ -1,2 +1,4 @@
 .rake_tasks
 Gemfile.lock
+.ruby-*
+pkg
