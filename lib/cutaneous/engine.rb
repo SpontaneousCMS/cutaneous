@@ -39,6 +39,14 @@ module Cutaneous
       file_loader(format).exists?(root, relative_path)
     end
 
+    def convert(template, to_syntax, format = default_format)
+      file_loader(format).convert(template, to_syntax)
+    end
+
+    def convert_string(template_string, to_syntax, format = default_format)
+      string_loader(format).convert(template_string, to_syntax)
+    end
+
     protected
 
     def file_loader_instance(format)

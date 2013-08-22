@@ -14,6 +14,10 @@ module Cutaneous
       template(template).render(context)
     end
 
+    def convert(template, to_syntax)
+      template(template).convert(to_syntax)
+    end
+
     def template(template)
       return proc_template(template) if template.is_a?(Proc)
       template_path = path(template)

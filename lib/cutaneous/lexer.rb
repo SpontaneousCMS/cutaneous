@@ -14,6 +14,16 @@ module Cutaneous
       @tokens ||= parse
     end
 
+    def convert(to_syntax)
+      template = ""
+      tags = to_syntax.tags
+      tokens.each do |token|
+        open, close = tags[token[0]]
+        template << open.to_s << token[1] << close.to_s
+      end
+      template
+    end
+
     # def script
     #   @script ||= compile
     # end

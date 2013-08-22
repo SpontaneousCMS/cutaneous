@@ -15,6 +15,10 @@ module Cutaneous
       context.instance_eval(&template_proc)
     end
 
+    def convert(to_syntax)
+      lexer.convert(to_syntax)
+    end
+
     def template_proc
       @template_proc ||= eval(template_proc_src, nil, path || "(cutaneous)").tap do |proc|
         @lexer = nil # release any memory used by the lexer, we don't need it anymore
