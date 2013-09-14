@@ -183,8 +183,6 @@ module Cutaneous
         end
         strip = strip_whitespace
       end
-      # We don't need this any more so release it
-      @lexer = nil
       expressions
     end
 

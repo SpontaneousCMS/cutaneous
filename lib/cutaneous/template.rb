@@ -1,3 +1,4 @@
+
 module Cutaneous
   class Template
     attr_accessor :loader, :lexer, :path
@@ -20,9 +21,7 @@ module Cutaneous
     end
 
     def template_proc
-      @template_proc ||= eval(template_proc_src, nil, path || "(cutaneous)").tap do |proc|
-        @lexer = nil # release any memory used by the lexer, we don't need it anymore
-      end
+      @template_proc ||= eval(template_proc_src, nil, path || "(cutaneous)")
     end
 
     def template_proc_src
