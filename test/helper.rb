@@ -9,7 +9,7 @@ class TestContext < Cutaneous::Context
 end
 
 class MiniTest::Spec
-  def ContextHash(params = {})
-    TestContext.new(Object.new, params)
+  def ContextHash(params = {}, parent = nil)
+    TestContext.new(Object.new, params, parent)
   end
 end

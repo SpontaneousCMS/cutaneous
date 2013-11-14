@@ -217,7 +217,7 @@ describe Cutaneous do
   it "Passes any instance variables & locals between contexts" do
     context = ContextHash(right: "left")
     result1 = engine.render("instance", context)
-    context = ContextHash(context)
+    context = ContextHash({}, context)
     result2 = engine.render("instance", context)
     result2.must_equal result1
   end
