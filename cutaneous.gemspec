@@ -14,8 +14,8 @@ Gem::Specification.new do |s|
   ## If your rubyforge_project name is different, then edit it and comment out
   ## the sub! line in the Rakefile
   s.name              = 'cutaneous'
-  s.version           = '0.1.6'
-  s.date              = '2013-09-14'
+  s.version           = '0.1.7'
+  s.date              = '2013-11-14'
   s.rubyforge_project = 'cutaneous'
 
   ## Make sure your summary is short. The description may be as long
