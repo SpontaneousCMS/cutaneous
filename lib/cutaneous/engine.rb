@@ -7,7 +7,7 @@ module Cutaneous
 
     def initialize(template_roots, syntax = Cutaneous::FirstPassSyntax, default_format = "html")
       @roots          = Array(template_roots)
-      @syntax    = syntax
+      @syntax         = syntax
       @loader_class   = FileLoader
       @default_format = default_format
     end
