@@ -5,10 +5,10 @@ module Cutaneous
   class Context < Delegator
     attr_accessor :__buf, :__loader, :__target, :__locals
 
-    def initialize(target, locals_or_context = {})
+    def initialize(target, locals = {}, parent_context = nil)
       super(target)
       @__target, @__locals = target, {}
-      __update_context(locals_or_context)
+      __update_context(locals, parent_context)
     end
 
     def __decode_params(params)
@@ -25,8 +25,7 @@ module Cutaneous
     end
 
     def clone(locals = {})
-      context = self.class.new(__target, self)
-      context.__update_with_locals(locals)
+      context = self.class.new(__target, locals, self)
       context
     end
 
@@ -52,16 +51,14 @@ module Cutaneous
       # Default behaviour is to silently discard errors
     end
 
-    def __update_context(parent)
-      case parent
-      when Hash
-        __update_with_locals(parent)
-      when Cutaneous::Context
+    def __update_context(locals, parent)
+      unless parent.nil?
         parent.instance_variables.reject { |var| /^@__/o === var.to_s }.each do |variable|
           instance_variable_set(variable, parent.instance_variable_get(variable))
         end
         __update_with_locals(parent.__locals) if parent.respond_to?(:__locals)
       end
+      __update_with_locals(locals)
     end
 
     # Sets up the local variables and also creates singleton methods on this
