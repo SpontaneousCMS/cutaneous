@@ -24,7 +24,7 @@ module Cutaneous
 
     # Create and cache a file loader on a per-format basis
     def file_loader(format)
-      file_loader_instance(format.to_s).tap do |loader|
+      file_loader_instance(format.to_sym).tap do |loader|
         loader.syntax = @syntax
       end
     end
