@@ -101,4 +101,9 @@ describe Cutaneous do
     script_path   = template_path("c", "html", "rb")
     refute ::File.exists?(script_path), "Template cache should not have created '#{script_path}'"
   end
+
+  it "doesn't attempt to write a cached script for Proc templates" do
+    context = ContextHash(right: "right")
+    result1 = engine.render(Proc.new { "This is ${right}"}, context)
+  end
 end

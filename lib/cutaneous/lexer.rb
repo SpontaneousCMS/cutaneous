@@ -24,10 +24,6 @@ module Cutaneous
       template
     end
 
-    # def script
-    #   @script ||= compile
-    # end
-
     protected
 
     BRACES ||= /\{|\}/
@@ -35,7 +31,7 @@ module Cutaneous
 
     def parse
       tokens    = []
-      scanner   = StringScanner.new(@template.to_s)
+      scanner   = StringScanner.new(template_string)
       tag_start = syntax.tag_start_pattern
       tags      = syntax.tags
       token_map = syntax.token_map
@@ -83,6 +79,18 @@ module Cutaneous
       expression.gsub!(syntax.escaped_tag_pattern, '\1')
       expression.gsub!(ESCAPE_STRING, '\\\\\&')
       [:text, expression]
+    end
+
+    def template_string
+      return read_file_template if @template.respond_to?(:read)
+      return @template.call if @template.respond_to?(:call)
+      @template.to_s
+    end
+
+    def read_file_template
+      source = @template.read
+      @template.close if @template.respond_to?(:close)
+      source
     end
   end
 end

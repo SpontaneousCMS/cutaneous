@@ -19,26 +19,22 @@ module Cutaneous
     end
 
     def template(template)
-      return proc_template(template) if template.is_a?(Proc)
+      template = open_template(template) if String === template
+      instance = @template_class.new(lexer(template))
+      instance.path   = template.path if template.respond_to?(:path)
+      instance.loader = self
+      instance
+    end
+
+    def open_template(template)
       template_path = path(template)
       raise UnknownTemplateError.new(@roots, filename(template)) if template_path.nil?
-
-      @template_class.new(file_lexer(template_path)).tap do |template|
-        template.path   = template_path
-        template.loader = self
-      end
+      # TODO: Make the encoding configurable?
+      TemplateReader.new(template_path, Encoding::UTF_8)
     end
 
-    def proc_template(lmda)
-      StringLoader.new(self).template(lmda.call)
-    end
-
-    def file_lexer(template_path)
-      lexer(SourceFile.new(template_path))
-    end
-
-    def lexer(template_string)
-      Lexer.new(template_string, syntax)
+    def lexer(template)
+      Lexer.new(template, syntax)
     end
 
     def path(template_name)
@@ -52,40 +48,29 @@ module Cutaneous
     end
 
     def exists?(template_root, template_name)
-      File.exists?(File.join(template_root, filename(template_name)))
-    end
-  end
-
-  # Converts a template string into a Template instance.
-  #
-  # Because a string template can only come from the engine instance
-  # we need a FileLoader to delegate all future template loading to.
-  class StringLoader < FileLoader
-    def initialize(file_loader)
-      @file_loader = file_loader
+      path = ::File.join(template_root, filename(template_name))
+      ::File.exists?(path)
     end
 
-    def syntax
-      @file_loader.syntax
+    def location(template_root, template_name)
+      return ::File.join(template_root, template_name) if exists?(template_root, template_name)
+      nil
     end
 
-    def template(template_string)
-      Template.new(lexer(template_string)).tap do |template|
-        template.loader = @file_loader
+    # An IO-like interface that provides #read and #path methods
+    class TemplateReader
+      def initialize(path, encoding)
+        @path     = path
+        @encoding = encoding
       end
-    end
-  end
 
-  # Converts a filepath to a template string as and when necessary
-  class SourceFile
-    attr_reader :path
+      def read(*args)
+        ::File.open(@path, 'r', external_encoding: @encoding) { |f| f.read }
+      end
 
-    def initialize(filepath)
-      @path = filepath
-    end
-
-    def to_s
-      File.read(@path)
+      def path
+        @path
+      end
     end
   end
 
@@ -119,13 +104,13 @@ module Cutaneous
   class CachedTemplate < Template
 
     def script
-      if cached?
-        script = File.read(script_path)
+      script = nil
+      path = script_path
+      if path && cached?
+        script = File.read(path)
       else
         script = super
-        File.open(script_path, "w") do |f|
-          f.write(script)
-        end
+        write_cached_script(script, path) unless path.nil?
       end
       script
     end
@@ -135,7 +120,7 @@ module Cutaneous
     end
 
     def template_path
-      lexer.template.path
+      path
     end
 
     def script_path
@@ -144,8 +129,15 @@ module Cutaneous
 
     def generate_script_path
       path = template_path
+      return nil if path.nil?
       ext  = File.extname path
       path.gsub(/#{ext}$/, ".rb")
+    end
+
+    def write_cached_script(script, path)
+      File.open(script_path, "w") do |f|
+        f.write(script)
+      end
     end
   end
 end

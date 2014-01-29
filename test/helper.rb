@@ -5,6 +5,8 @@ require 'minitest/autorun'
 
 require 'cutaneous'
 
+require 'stringio'
+
 class TestContext < Cutaneous::Context
 end
 

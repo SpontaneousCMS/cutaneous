@@ -35,6 +35,14 @@ describe "Parsers" do
       result.must_equal expected
     end
 
+    it "will render an object that responds to #read" do
+      template = StringIO.new("This is ${ right }")
+      context = ContextHash(right: "right")
+      result = subject.render(template, context)
+      result.must_equal "This is right"
+    end
+
+
     it "can convert a template to another syntax" do
       result = subject.convert('statements1', Cutaneous::SecondPassSyntax)
       result.must_equal read_template('statements2.html.cut')
@@ -194,6 +202,17 @@ describe Cutaneous do
     result.must_equal "right"
   end
 
+  it "calls #close on any IO instances passed to it" do
+    context = ContextHash(right: "correct")
+    template = MiniTest::Mock.new
+    template.expect(:close, nil)
+    template.expect(:read, "${ right }")
+    template.expect(:path, "/path/to/template.html.cut")
+    result = engine.render(template, context, "rss")
+    template.verify
+    result.must_equal "correct"
+  end
+
   it "Allows for configuration of the engine's default format" do
     engine.default_format = "rss"
     context = ContextHash(right: "right")
@@ -208,10 +227,20 @@ describe Cutaneous do
   end
 
   it "Tests for the existence of a template file for a certain format" do
-    assert engine.template_exists?(template_root, "expressions1", "html")
-    assert engine.template_exists?(template_root, "other/error", "html")
-    assert engine.template_exists?(template_root, "include", "rss")
-    refute engine.template_exists?(template_root, "missing", "rss")
+    assert engine.template_exists?("expressions1", "html")
+    assert engine.template_exists?("other/error", "html")
+    assert engine.template_exists?("include", "rss")
+    refute engine.template_exists?("missing", "rss")
+  end
+
+  it "returns the full path to a template if found" do
+    assert_equal "#{template_root}/expressions1", engine.template_location("expressions1", "html")
+    assert_equal nil, engine.template_location("missing", "rss")
+  end
+
+  it "can determine if a template contains tags for its syntax" do
+    assert engine.dynamic_template?("i am ${dynamic}")
+    refute engine.dynamic_template?("i am not dynamic")
   end
 
   it "Passes any instance variables & locals between contexts" do

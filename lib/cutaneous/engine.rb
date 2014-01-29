@@ -18,8 +18,11 @@ module Cutaneous
 
     alias_method :render, :render_file
 
+    # need an explicit #render_string method so it's possible to distinguish
+    # between a String which is a path to a template & a String which is a
+    # template itself.
     def render_string(template_string, context, format = default_format)
-      string_loader(format).render(template_string, context)
+      render_file(proc_template(template_string), context, format)
     end
 
     # Create and cache a file loader on a per-format basis
@@ -29,14 +32,24 @@ module Cutaneous
       end
     end
 
-    # Not worth caching string templates as they are most likely to be one-off
-    # instances & not repeated in the lifetime of the engine.
-    def string_loader(format)
-      StringLoader.new(file_loader(format))
+    def template_exists?(relative_path, format)
+      @roots.each do |root|
+        return true if file_loader(format).exists?(root, relative_path)
+      end
+      false
     end
 
-    def template_exists?(root, relative_path, format)
-      file_loader(format).exists?(root, relative_path)
+    def template_location(relative_path, format)
+      @roots.each do |root|
+        if (path = file_loader(format).location(root, relative_path))
+          return path
+        end
+      end
+      nil
+    end
+
+    def dynamic_template?(template_string)
+      @syntax.is_dynamic?(template_string)
     end
 
     def convert(template, to_syntax, format = default_format)
@@ -44,7 +57,11 @@ module Cutaneous
     end
 
     def convert_string(template_string, to_syntax, format = default_format)
-      string_loader(format).convert(template_string, to_syntax)
+      convert(proc_template(template_string), to_syntax, format)
+    end
+
+    def proc_template(template_string)
+      Proc.new { template_string }
     end
 
     protected
