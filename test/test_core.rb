@@ -243,6 +243,10 @@ describe Cutaneous do
     refute engine.dynamic_template?("i am not dynamic")
   end
 
+   it "ignores escaped tags when testing for dynamic status" do
+     refute engine.dynamic_template?("i am not \\${dynamic}")
+   end
+
   it "Passes any instance variables & locals between contexts" do
     context = ContextHash(right: "left")
     result1 = engine.render("instance", context)
