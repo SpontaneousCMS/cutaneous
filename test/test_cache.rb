@@ -55,7 +55,7 @@ describe Cutaneous do
 
     # Ensure that the cached script file is being used by overwriting its contents
     path = template_path("c", "html", "rb")
-    assert ::File.exists?(path), "Template cache should have created '#{path}'"
+    assert ::File.exist?(path), "Template cache should have created '#{path}'"
     File.open(path, "w") do |f|
       f.write("__buf << 'right'")
     end
@@ -78,7 +78,7 @@ describe Cutaneous do
 
     template_path = template_path("c", "html")
     script_path   = template_path("c", "html", "rb")
-    assert ::File.exists?(script_path), "Template cache should have created '#{script_path}'"
+    assert ::File.exist?(script_path), "Template cache should have created '#{script_path}'"
 
     File.open(template_path, "w") { |f| f.write("template") }
     File.utime(now, now, template_path)
@@ -99,7 +99,7 @@ describe Cutaneous do
 
     result1 = engine.render("c", context)
     script_path   = template_path("c", "html", "rb")
-    refute ::File.exists?(script_path), "Template cache should not have created '#{script_path}'"
+    refute ::File.exist?(script_path), "Template cache should not have created '#{script_path}'"
   end
 
   it "doesn't attempt to write a cached script for Proc templates" do
